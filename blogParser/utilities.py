@@ -2,7 +2,7 @@ import glob, re, subprocess, random
 import lxml.etree as etree
 from lxml.html.clean import Cleaner
 
-html_parser = etree.HTMLParser()
+html_parser = etree.HTMLParser(remove_blank_text=True)
 html_cleaner = Cleaner( style=True, scripts=True, comments=True, safe_attrs_only=True )
 
 ### "Cleaner" functions ########################################################

@@ -1,4 +1,5 @@
 import datetime, glob, re, sys, os, random
+from copy import deepcopy
 import lxml.etree as etree
 from lxml import html
 #from lxml.html.clean import Cleaner
@@ -13,7 +14,8 @@ def profiledParser( parser ):
     return parser
 
 
-html_parser = etree.HTMLParser()
+#html_parser = etree.HTMLParser(remove_blank_text=True)
+xml_parser = etree.XMLParser(remove_blank_text=True)
 
 field_keys = ["title","author","date","content","labels","comment-count"]
 
@@ -155,7 +157,9 @@ class BlogParser(object):
         blog_html = etree.Element('html')
 
         head_html = etree.SubElement( blog_html, 'head' )
-        e = etree.Element("link", REL="StyleSheet", HREF="article_style.css", TYPE="text/css")
+        head_html.append( etree.Element("link", REL="StyleSheet", HREF="article_style.css", TYPE="text/css") )
+        e = etree.Element( "meta", content="text/html; charset=UTF-8" )
+        e.set("http-equiv", "Content-Type")
         head_html.append(e)
 
         body_html = etree.Element('body')
@@ -173,7 +177,6 @@ class BlogParser(object):
         doc_div.set("class", "document")
 
         #Create the doc-header div, with all sub-divs
-        """
         doc_header = etree.Element("div")
         doc_header.set("class", "document-header")
         for f in ["title","author","date","labels","comment-count"]:
@@ -181,16 +184,26 @@ class BlogParser(object):
                 e = etree.Element("div")
                 e.set("class", f)
                 e.text = post_xml.xpath(f)[0].text
+                if e.text == None:
+                    e.text = "&nbsp;"
                 doc_header.append(e)
             except IndexError:
                 pass
         doc_div.append(doc_header)
-        """
-
+        
         doc_content = etree.Element("div")
         doc_content.set("class", "document-content")
-        f = etree.fromstring(post_xml.xpath('content')[0].text)
+
+#        print '='*80
+        S = post_xml.xpath('content')
+        s = S[0].text
+        f = etree.fromstring(s, xml_parser)
+#        print etree.tostring(f, pretty_print=True)
+#        f = etree.fromstring("<a>blah</a>")
+
         doc_content.append(f)
+        
+
         doc_div.append(doc_content)
 
         return doc_div
@@ -295,6 +308,25 @@ class WordpressParserB( BlogParser ):
     def getDateFromUrl(x):
         return '/'.join(x.attrib["content"].split('/')[3:6])
 
+    def cleanAndTextify(x):
+        x = deepcopy(x)
+    
+        removed_elements = [
+            ".//div[contains(@class,'wpcom_below_post')]",
+            ".//div[contains(@class,'sharedaddy')]",
+            "id('wpl-likebox')",
+            "id('wpcom_below_post')",
+            ".//p[@class='clear']",
+            ".//p[contains(@class,'postmetadata')]",
+            ".//div[contains(@class,'wpadvert')]",
+        ]
+        for r in removed_elements:
+            for e in x.xpath(r):
+                print etree.tostring(e, pretty_print=True)
+                e.getparent().remove(e)
+            
+        return utilities.cleanAndTextify(x)
+
 
     map_glob = '/[0-9][0-9][0-9][0-9]/[0-9][0-9]/[0-9][0-9]/*/index.html'
 
@@ -313,7 +345,7 @@ class WordpressParserB( BlogParser ):
         "title"   : utilities.getNodeText,
 #        "author"  : lambda:"",
         "date"    : getDateFromUrl,
-        "content" : utilities.cleanAndTextify,
+        "content" : cleanAndTextify,#utilities.cleanAndTextify,
         "labels"  : getLabelsFromEntryUtility,
 #        "comment-count" : extractCommentCount,
     }
@@ -333,11 +365,3 @@ class NewsvineParserA( BlogParser ):
 class LiveJournalParserA( BlogParser ):
     map_glob = '[0-9][0-9][0-9][0-9]/[0-9][0-9]/[0-9][0-9]/*.html'
 
-
-"""
-if __name__ == "__main__":
-    filepath = '/scratch/unmirrored5/agong/blog_crawl_2012_01/mirrors/gdcritter.blogspot.com/'
-    parser = BlogspotParserA()
-    X = parser.parseBlog( filepath, False )
-#    file( '/users/agong/Desktop/temp.xml', 'w' ).write( etree.tostring( X, pretty_print=True ) )
-"""
