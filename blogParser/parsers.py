@@ -194,14 +194,13 @@ class BlogParser(object):
         doc_content = etree.Element("div")
         doc_content.set("class", "document-content")
 
-#        print '='*80
         S = post_xml.xpath('content')
         s = S[0].text
         f = etree.fromstring(s, xml_parser)
-#        print etree.tostring(f, pretty_print=True)
-#        f = etree.fromstring("<a>blah</a>")
-
-        doc_content.append(f)
+        if f is None:
+            doc_content.text = "&nbsp;"
+        else:
+            doc_content.append(f)
         
 
         doc_div.append(doc_content)
@@ -320,9 +319,10 @@ class WordpressParserB( BlogParser ):
             ".//p[contains(@class,'postmetadata')]",
             ".//div[contains(@class,'wpadvert')]",
         ]
+
         for r in removed_elements:
             for e in x.xpath(r):
-                print etree.tostring(e, pretty_print=True)
+#                print etree.tostring(e, pretty_print=True)
                 e.getparent().remove(e)
             
         return utilities.cleanAndTextify(x)

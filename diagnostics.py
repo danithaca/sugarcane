@@ -2,6 +2,13 @@ import glob, csv, datetime, sys, inspect, random, os
 from blogParser.parsers import parser_registry, field_keys
 from blogParser.utilities import firefox
 
+input_path = '/scratch/unmirrored1/agong/blog_crawl_2012_01/mirrors/'
+output_path = 'nothing-here-yet!!'
+log_path = '/users/agong/Desktop/blog-crawl-results/'
+
+log_url = "http://www.cscs.umich.edu/~agong/blog-crawl-results/"
+
+
 
 #! This is all legacy code -- useful, but possibly not up to snuff ############
 
@@ -129,18 +136,16 @@ def test_parser_on_one_blog( parser, blog, break_on_mistake=False, max_posts=Non
             print r[f][2].__repr__()[:80]
 
     print '='*80
-    results_path = "/users/agong/Desktop/blog-crawl-results/"
-    results_url = "http://www.cscs.umich.edu/~agong/blog-crawl-results/"
-
+    
     #Parse the whole blog and save as xml
-    xml = parser.parseBlog(blog, filename=results_path+"temp.xml", max_posts=max_posts)
-    print results_url+"temp.xml"
-#    firefox("results/temp.xml")
+    xml = parser.parseBlog(blog, filename=log_path+"temp.xml", max_posts=max_posts)
+    print log_url+"temp.xml"
+#    firefox(log_path+"temp.xml")
 
     #Also convert and save as html
-    parser.convertToHtml(xml, filename=results_path+"temp.html")
-    print results_url+"temp.html"
-#    firefox("results/temp.html")
+    parser.convertToHtml(xml, filename=log_path+"temp.html")
+    print log_url+"temp.html"
+#    firefox(log_path+"temp.html")
     
 
 
@@ -148,8 +153,8 @@ def test_parser_on_one_blog( parser, blog, break_on_mistake=False, max_posts=Non
 
 def test_all_mappers( blogs, store_results=False, shuffle=False, max_blogs=None ):
     if store_results:
-        G = glob.glob('results/map-test-*.csv')
-        C = csv.writer(file('results/map-test-'+str(len(G)+1)+'.csv', 'w'))
+        G = glob.glob(log_path+'map-test-*.csv')
+        C = csv.writer(file(log_path+'map-test-'+str(len(G)+1)+'.csv', 'w'))
         C.writerow( ['index', 'file_count'] + [p for p in parser_registry] + ['blog', 'filepath', 'timestamp'] )
 
     if shuffle:
@@ -189,10 +194,6 @@ def main(argv=None):
     blogs = file('data/um1-wordpress-blogs.txt','r').read()[:-1].split('\n')
 #    print "\n".join(blogs[:5])
 
-    input_path = '/scratch/unmirrored1/agong/blog_crawl_2012_01/mirrors/'
-#    output_path =
-#    summary_path = 
-
     command = argv[1]
     if command=='list-parsers':
         list_parsers()
@@ -204,15 +205,15 @@ def main(argv=None):
         test_mapper(blogs, argv[2])
 
     elif command=='test-1x1':
-        test_parser_on_one_blog(parser_registry[argv[2]](), input_path+argv[3], break_on_mistake=True, max_posts=20)
+        test_parser_on_one_blog(parser_registry[argv[2]](), input_path+argv[3], break_on_mistake=True)#, max_posts=20)
 
     elif command=='test-1xMany':
         test_parser_on_blog_list(
             parser_registry[argv[2]](),
             blogs,
             verbose=True,
-            detailed_csv = csv.writer(file('results/check_'+argv[2]+'.csv', 'w')),
-            summary_csv = csv.writer(file('results/check_'+argv[2]+'_summary.csv', 'w')),
+            detailed_csv = csv.writer(file(log_path+'check_'+argv[2]+'.csv', 'w')),
+            summary_csv = csv.writer(file(log_path+'/check_'+argv[2]+'_summary.csv', 'w')),
         )
 
 
