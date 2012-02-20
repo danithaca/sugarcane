@@ -96,11 +96,31 @@ Next steps:
 
 === 2012-02-12 ===
 
+=== 2012-02-20 ===
+
+* DB structure for blogInspector:
+
+    postTest
+        testType
+        
+        post_filename
+        timestamp
+        git_hash
+        parser_class
+
+    mapTest
 
 
+* Design decisions
+    Should blogInspector store results from automated tests, or just human inspection?
+        Both, but not necc in the same place.
 
 
+* Using the django ORM without any of the other stuff
+    http://stackoverflow.com/questions/937742/use-django-orm-as-standalone
+    http://stackoverflow.com/questions/302651/use-only-some-parts-of-django
 
-
-
+* Symlinks
+    http://www.cscs.umich.edu/~agong/um1-blog-crawl/...
+    http://www.cscs.umich.edu/~agong/blog-crawl-results/
 
