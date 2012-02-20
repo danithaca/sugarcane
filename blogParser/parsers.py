@@ -190,10 +190,8 @@ class BlogParser(object):
         doc_content = etree.Element("div")
         doc_content.set("class", "document-content")
         f = etree.fromstring(post_xml.xpath('content')[0].text)
-        e.append(f)
+        doc_content.append(f)
         doc_div.append(doc_content)
-
-        print 'Unicorn'
 
         return doc_div
         

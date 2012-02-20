@@ -129,3 +129,15 @@ Next steps:
         links to
         /users/agong/Desktop/blog-crawl-results
 
+
+
+* Milestones
+    Add argv handling
+    Integrate with scrapy
+    Build blogInspector
+
+
+
+
+
+

@@ -128,12 +128,18 @@ def test_parser_on_one_blog( parser, blog, break_on_mistake=False, max_posts=Non
         for r in results:
             print r[f][2].__repr__()[:80]
 
+    print '='*80
+    results_path = "/users/agong/Desktop/blog-crawl-results/"
+    results_url = "http://www.cscs.umich.edu/~agong/blog-crawl-results/"
+
     #Parse the whole blog and save as xml
-    xml = parser.parseBlog(blog, filename="results/temp.xml", max_posts=max_posts)
+    xml = parser.parseBlog(blog, filename=results_path+"temp.xml", max_posts=max_posts)
+    print results_url+"temp.xml"
 #    firefox("results/temp.xml")
 
     #Also convert and save as html
-    parser.convertToHtml(xml, filename="results/temp.html")
+    parser.convertToHtml(xml, filename=results_path+"temp.html")
+    print results_url+"temp.html"
 #    firefox("results/temp.html")
     
 
@@ -177,12 +183,15 @@ def list_parsers():
 
 
 def main(argv=None):
+
 #    blogs = file('data/um1-completed-blogs.txt','r').read()[:-1].split('\n')
 #    blogs = file('data/um1-blogspot-blogs.txt','r').read()[:-1].split('\n')
     blogs = file('data/um1-wordpress-blogs.txt','r').read()[:-1].split('\n')
 #    print "\n".join(blogs[:5])
 
-    filepath = '/scratch/unmirrored1/agong/blog_crawl_2012_01/mirrors/'
+    input_path = '/scratch/unmirrored1/agong/blog_crawl_2012_01/mirrors/'
+#    output_path =
+#    summary_path = 
 
     command = argv[1]
     if command=='list-parsers':
@@ -195,7 +204,7 @@ def main(argv=None):
         test_mapper(blogs, argv[2])
 
     elif command=='test-1x1':
-        test_parser_on_one_blog(parser_registry[argv[2]](), filepath+argv[3], break_on_mistake=True, max_posts=20)
+        test_parser_on_one_blog(parser_registry[argv[2]](), input_path+argv[3], break_on_mistake=True, max_posts=20)
 
     elif command=='test-1xMany':
         test_parser_on_blog_list(
