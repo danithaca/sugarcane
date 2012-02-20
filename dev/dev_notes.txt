@@ -122,5 +122,10 @@ Next steps:
 
 * Symlinks
     http://www.cscs.umich.edu/~agong/um1-blog-crawl/...
-    http://www.cscs.umich.edu/~agong/blog-crawl-results/
+        links to
+        /scratch/unmirrored1/agong/blog_crawl_2012_01
+        
+    http://www.cscs.umich.edu/~agong/blog-crawl-results/...
+        links to
+        /users/agong/Desktop/blog-crawl-results
 
