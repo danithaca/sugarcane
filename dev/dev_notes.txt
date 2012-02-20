@@ -1,0 +1,106 @@
+### Blog Parsers Dev Notes ###
+
+What possible parse failures are there?
+* Between pages
+	Miss some pages
+	Find some pages more than once
+	Find non-post pages
+
+* Within pages
+	multiple matches
+	no matches
+	
+	gets too much content
+	gets the wrong content
+	doesn't get the full content
+	
+	gets the right content, but it's not formatted correctly
+	
+=== 2012-01-28 ===
+
+Question: Where did the original sample of blogs come from?  How much of the survey sample of respondents does it cover?
+Answer: I don't know, but this question is less important than the problem up setting up parsers.  Figurte it out later.
+
+The hard part about this is going to be hooking validators into parsers...
+
+
+Pain point in the process:
+"I have a parser that works for blog x.  Will it work for all blogs in class X?"
+
+
+I think validators are going to part of the BlogParser class...
+Except for hooking into an outside db...
+
+To do:
+* Get check-fields working
+* Write first check loop
+* Scaffold DB to store results
+
+=== 2012-02-02 ===
+
+I've been working on a massive data-munging project for my dissertation.  It's been a story of ups and downs.
+
+Up: I've got a bunch of useful parsers and cleaners built in python.
+
+Problem: The data are messy, so it's hard to know if/when they are working.  Unit testing is very hard with messy data.
+Solution: Google Refine provides a GUI and tools for doing this kind of thing quickly.
+
+Problem : My parsers are build in python, using the C++-based library lxml.  Refine does jython but not python.
+Solution: Refine *does* allow API calls.  So maybe I can set up a local django server with an API to the stuff I care about.
+
+
+functions
+classes
+modules
+packages
+
+
+
+
+I have a very specific use-case in mind for SugarCane: editing an outside API.
+* run Refine
+* call outside python libraries
+* edit those libraries, and update the results within Refine
+
+
+=== 2012-02-03 ===
+Refine was a bust.  A good idea, but it doesn't do what I need.
+
+Pain points
+* easy integration with python
+* ability to quickly re-run transformations
+* cross-column clustering
+
+Next goal (?): write sugarcane as a standalone blog parsing library.
+
+Main additions:
+    a DB to track progress
+    an interface for validation -- probably django
+
+I think we're not there yet.  Save it for later, when I understand all the pieces better.
+
+This is a decision I face a lot: when to refactor code into larger projects.  What are the deciding factors?  Maybe the agile development people have ideas.
+
+In the short run, how do I keep scripts organized?  (Also a decision I face a lot.)  These tend to be ephemeral, but there are useful parts that may come up later.
+
+* 2 hours later...
+
+This is going really well.
+Writing diagnostics.py has worked perfectly.  In only wish I could use argparse (py2.7) to properly parse arguments, instead of just hacking it myself.  Maybe I should use the outdated version.
+
+Next steps:
+* count files
+
+(See notes)
+
+
+=== 2012-02-12 ===
+
+
+
+
+
+
+
+
+

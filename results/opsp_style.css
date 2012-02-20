@@ -1,0 +1,132 @@
+/********************** Main ***************************/
+body {
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 14px;
+	margin: 10px 10px;
+	padding: 0px;
+}
+#mainBox {
+	margin: 0px auto;
+	text-align: left;
+	width: 717px;
+	position:relative;
+}
+#mainHeader {
+	margin: 0px 0px 0px 0px;
+	height:119px;
+	position:relative;
+}
+#wideHeader {
+	margin: 0px 0px 0px 0px;
+	height:30px;
+	position:relative;
+}
+#mainContent {
+	padding:10px;
+}
+#wideContent {
+	margin-top:20px;
+	margin-left:auto;
+	margin-right:auto;
+	width:1050px;
+}
+#mainFooter {
+	text-align:center;
+	padding: 10px;
+}
+
+
+#mainTabs{
+	display:block;
+	top:90px;
+	position:absolute;
+	margin: 0px 0px 0px 0px;
+	height:22px;
+	padding:5px 0px 0px 0px;
+	text-align:center;
+}
+#wideTabs{
+	display:block;
+	margin: 0px 0px 0px 0px;
+	height:22px;
+	padding:6px 0px 0px 0px;
+}
+#mainTabs li, #wideTabs li{
+	display:inline;
+	padding-left:20px;
+}
+
+#menuBox{
+	float:right;
+	margin: 20px 0px 20px 40px;
+/*
+	margin-left:40px;
+	margin-bottom:15px;
+*/
+	width:220px;
+}
+#menuContent {
+	padding:10px;
+}
+#menuContent ul{
+	margin:0px;
+	padding:0px 0px 0px 20px;
+}
+#menuContent li{
+	margin:0px;
+	padding:0px;
+}
+
+#codebookBox{
+	width:400px;
+}
+#articleBox{
+	padding:10px;
+	float:right;
+	width:600px;
+}
+
+
+/********************** Content ***************************/
+.content {
+	padding:10px;
+}
+
+.subContent {
+	padding: 20px 20px 0px 20px;
+}
+
+
+h1{ /*Used only in the page header*/
+ 	float:left;
+	margin: 12px 20px 12px 20px;
+	text-weight:bold;
+	font-size:26px;
+	color:#fff;
+}
+h2{ /*Used for major content titles*/
+	color:#00275E;
+	font-size:18px;
+	margin: 0px 0px 5px 0px;
+}
+h3{ /*Used for subtitles, such as FAQ questions*/
+	color:#00275E;
+	font-size:14px;
+	margin: 0px 0px 5px 0px;
+}
+h4{ /*Used for sidebar headers*/
+	color:#fff;
+	font-size:14px;
+	margin: 5px 0px 5px 10px;
+}
+
+table.contentTable{
+	margin-left:40px;
+	margin-right:40px;
+	width:577px;
+}
+
+td{
+	vertical-align:top;
+	padding:5px;
+}

@@ -1,0 +1,12 @@
+
+
+=== To Do ===
+Figure out httrack
+Get final sample
+Figure out files to exclude
+Run!
+
+
+=== Done ===
+Figure out program architecture (Queues and logging)
+

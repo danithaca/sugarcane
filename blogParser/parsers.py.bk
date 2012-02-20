@@ -1,0 +1,129 @@
+import datetime, glob, re
+import lxml.etree as etree
+#import lxml.html
+from lxml import html
+from lxml.html.clean import Cleaner
+
+import utilities
+from profiler import profiledParser
+from validator import validatedParser, checkFields
+
+html_parser = etree.HTMLParser()
+#html_cleaner = Cleaner( style=True, scripts=True, comments=True, safe_attrs_only=True )
+html_cleaner = Cleaner( style=True, scripts=True, comments=True, safe_attrs_only=True )
+
+class BlogParser(object):
+    def parseBlog(self, filepath, verbose=False):
+        if verbose: print 'Parsing blog at filepath', filepath
+        blog_xml = etree.Element( "blog" )
+
+        #self.setExpressions( url )
+        self.setBlogVariables( blog_xml, verbose )
+        
+        post_files = self.mapPostPages(filepath, verbose)
+        for p in post_files[:10]:
+            if verbose: print '\tParsing post in file', p
+            post_xml = self.parsePost( file(p, 'r').read(), verbose )
+            blog_xml.append( post_xml )
+            
+        return blog_xml
+
+    def setBlogVariables( self, blog_xml, verbose=False ):
+        #blog_xml.set( "blog_name", url )
+        blog_xml.set( "parser", str(self.__class__.__name__))
+        blog_xml.set( "parse_date", str(datetime.datetime.now()) )
+#    def setExpressions(self, url=None, filepath=None): pass
+    def mapPostPages(self, filepath, verbose=False): pass
+    def parsePost(self, text, verbose=False): pass
+
+
+@profiledParser
+@validatedParser
+class BlogspotParserA( BlogParser ):
+    
+#    fields_xpath = {
+#        "post" : "//div[@class='post-outer']",
+#        "date" : "//h2[@class='date-header']",
+#        "title" : "//h3[@class='post-title entry-title']",
+
+#        "post" : "//div[@class='post-outer']",
+#        "date" : "//h2[@class='date-header']",
+#        "title" : "//h3[@class='post-title entry-title']",
+#        "author" : "",
+#        "labels" : "",
+#        "comment_count" : "//h4",
+#    }
+    
+#    def setExpressions(self, url=None, filepath=None):
+#        self.post_pages_regex = url+"[0-9]*/[0-9]*/.*?\.html"
+#        self.archive_pages_regex = url+"[0-9]+_[0-9]+_[0-9]+_archive.html"
+   
+    def mapPostPages(self, filepath, verbose=False):
+        if verbose: print '\tMapping post pages...'
+        F = glob.glob( filepath+'/[0-9]*/[0-9]*/*.html' )
+        if verbose: print '\t\tFound', len(F), 'posts.'
+        return F
+
+    def parsePost(self, text, verbose=False):
+        post_xml = etree.Element( "post" )
+
+        H = html.fromstring(text)
+        etree.SubElement( post_xml, "title" ).text = H.xpath("//h3[@class='post-title entry-title']")[0].text
+        etree.SubElement( post_xml, "date" ).text = H.xpath("//h2[@class='date-header']/span")[0].text
+        
+        x = H.xpath("//div[@class='post-body entry-content']")[0]
+#        file('/users/agong/Desktop/temp.txt','w').write(etree.tostring( x, pretty_print=True ))
+        print etree.tostring( x, pretty_print=True )
+        x = html_cleaner.clean_html( x )    #Remove scripts, styles, etc.
+        etree.SubElement( post_xml, "post" ).text = etree.tostring( x, pretty_print=True )
+        return post_xml
+            
+    """
+    def parsePost(self, text, verbose=False):
+        post_xml = etree.Element( "post" )
+
+        H = html.fromstring(text)
+        for field in self.fields_xpath:
+            if 1:
+                X = H.xpath(self.fields_xpath[field])[0]
+
+                print '='*80
+                print X
+                text = etree.tostring( X, pretty_print=True)
+                print '-'*80
+                print text
+#                text = cleaner.clean_html( text )    #Remove scripts, styles, etc.
+#                print '-'*80
+#                print text
+#                text = re.sub('<.*?>', '', text )    #Remove html tags
+#                text = re.sub('\s+', ' ', text )    #Remove whitespace
+#                print '-'*80
+#                print text
+                e = etree.SubElement( post_xml, field )
+                e.text = text
+#            except:
+#                pass
+
+        return post_xml
+    """
+
+if __name__ == "__main__":
+    X = BlogspotParserA().parseBlog('/scratch/unmirrored5/agong/blog_crawl_2012_01/mirrors/gdcritter.blogspot.com/', True)
+    file( '/users/agong/Desktop/temp.xml', 'w' ).write( etree.tostring( X, pretty_print=True ) )
+    
+"""
+    import glob
+    
+    path = '/home/agong/Documents/blog_profiler/pol_blog_front_pages_2012-01-03/suffixed_files/'
+    F = glob.glob( path+'*' )
+    F2 = utilities.filterByRegex( F, 'blogspot' )
+
+    B = BlogspotParserA()
+
+    X = [ B.parsePage(f) for f in F2[:10] ]
+    #etree.tostring( B.parsePage(f), pretty_print=False )
+    
+    print checkFields(B, None)
+    for x in X:
+        print checkFields(B,x)    
+"""

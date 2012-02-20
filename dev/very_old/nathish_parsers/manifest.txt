@@ -1,0 +1,11 @@
+Files in this directory:
+
+profiler2.py
+    This code loops over blogs and blog parsers and sees which ones match, by trial and error.  It's not very elegant, but it's a reasonable way to start.
+   
+blog_parsers.py
+    This library (which my wife wrote as a favor) contains functions for parsing blogs.  They don't always work, but they're a first attempt to parse blogs and write xml.
+
+blog_list.txt
+	A list of all the blogs to be parsed.  Each of these blogs corresponds to a directory in the folder "/scratch/unmirrored5/agong/blog_panel_crawl".
+

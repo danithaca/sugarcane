@@ -1,0 +1,653 @@
+
+R version 2.8.1 (2008-12-22)
+Copyright (C) 2008 The R Foundation for Statistical Computing
+ISBN 3-900051-07-0
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> 	A <- read.csv("blogParsingResults.csv")
+> #	dim(A)
+> #	names(A)
+> 
+> 	C <- reshape(A, idvar="blog_url", timevar="blog_type", direction="wide" )
+> #	dim(C)
+> #	names(C)
+> 
+> #How many total blogs were profiled?
+> 	print( "Total blogs" )
+[1] "Total blogs"
+> 	print( length(C$blog_url) )
+[1] 281
+> 
+> 	grep( "total_files", names(C) )
+[1]  2 11 20
+> 	x <- C[,grep( "total_files", names(C) )]
+> 
+> #How many blogs had at least one file match?
+> 	print( "Blogs with at least one matching file" )
+[1] "Blogs with at least one matching file"
+> 	C$blog_url[rowSums(x)>0]
+  [1] magicvalleymormon.blogspot.com                
+  [2] forumforforeignaffairs.blogspot.com           
+  [3] www.growthology.org                           
+  [4] antigreen.blogspot.com                        
+  [5] www.thewesternlines.com                       
+  [6] northeasttruth.com                            
+  [7] larrywho.wordpress.com                        
+  [8] rowdynation.blogspot.com                      
+  [9] a4theroad.blogspot.com                        
+ [10] armywifeblog.com                              
+ [11] narmer.wordpress.com                          
+ [12] www.feardepartment.com                        
+ [13] www.gospelaccordingtohate.com                 
+ [14] weblog.timoregan.com                          
+ [15] bangladeshwatchdog1.wordpress.com             
+ [16] ulstercountycomptroller.blogspot.com          
+ [17] gregmankiw.blogspot.com                       
+ [18] fullcirclereport.blogspot.com                 
+ [19] www.american-presidents.org                   
+ [20] the-spyglass.blogspot.com                     
+ [21] fiddleferme.blogspot.com                      
+ [22] nafeez.blogspot.com                           
+ [23] macilree.blogspot.com                         
+ [24] themindofanatheist.wordpress.com              
+ [25] www.themudflats.net                           
+ [26] forthardknox.com                              
+ [27] theliberalslies.blogspot.com                  
+ [28] hope-theologian.blogspot.com                  
+ [29] www.politicalwatchdog.com                     
+ [30] econperspectives.blogspot.com                 
+ [31] dougpowers.com                                
+ [32] migramatters.blogspot.com                     
+ [33] thefiresidepost.com                           
+ [34] eyeofthestorm.blogs.com                       
+ [35] www.behindbluelines.com                       
+ [36] www.davesblogcentral.com                      
+ [37] helmandblog.blogspot.com                      
+ [38] gabbygeezer.blogspot.com                      
+ [39] hotbmembers.blogspot.com                      
+ [40] www.undertheconcrete.org                      
+ [41] tachesdhuile.blogspot.com                     
+ [42] tomnelson.blogspot.com                        
+ [43] greatlawyer.superseoblog.com                  
+ [44] contrariancommentary.blogspot.com             
+ [45] theweakerparty.blogspot.com                   
+ [46] njopengovt.blogspot.com                       
+ [47] govgap.wordpress.com                          
+ [48] greedybastardsclub.blogspot.com               
+ [49] globalwarmingwatch.blogspot.com               
+ [50] ericbjorlin.wordpress.com                     
+ [51] ansley.wordpress.com                          
+ [52] epolicy.blogspot.com                          
+ [53] planningadvisor.wordpress.com                 
+ [54] jerseyguy.wordpress.com                       
+ [55] astrodyke.blogspot.com                        
+ [56] pilcrowpress.blogspot.com                     
+ [57] indiadoption.blogspot.com                     
+ [58] www.rpa.org                                   
+ [59] democurmudgeon.blogspot.com                   
+ [60] shadowedforest.blogspot.com                   
+ [61] arthurcohen.blogspot.com                      
+ [62] arabracismislamofascism.wordpress.com         
+ [63] www.enoughenough.org                          
+ [64] bradleysmithsblog.blogspot.com                
+ [65] blog.sojo.net                                 
+ [66] realtruthonline.blogspot.com                  
+ [67] advocatefornurses.typepad.com                 
+ [68] viviansalama.wordpress.com                    
+ [69] threshinggrain.blogspot.com                   
+ [70] cyberray-rays.blogspot.com                    
+ [71] parkprivatization.com                         
+ [72] www.thunderrun.us                             
+ [73] everydayecon.wordpress.com                    
+ [74] www.mednauseam.com                            
+ [75] www.mormonlawyers.com                         
+ [76] politicalcartel.org                           
+ [77] ninjanun.blogspot.com                         
+ [78] studentsforliberty.blogspot.com               
+ [79] joshuapundit.blogspot.com                     
+ [80] freedomain.blogspot.com                       
+ [81] peakoilquestionoftheday.blogspot.com          
+ [82] morielbealertblog.blogspot.com                
+ [83] pomoprophet.blogspot.com                      
+ [84] dodocanspell.blogspot.com                     
+ [85] www.nondomesticatedthinker.com                
+ [86] pmbcomments.blogspot.com                      
+ [87] dssfeed.blogspot.com                          
+ [88] boogeymanchronicles.blogspot.com              
+ [89] patrickmurfin.livejournal.com                 
+ [90] illinoisobserver.org                          
+ [91] jaksview3.wordpress.com                       
+ [92] yourblackpolitics.blogspot.com                
+ [93] jmcpherson.wordpress.com                      
+ [94] alas-a-llama.livejournal.com                  
+ [95] ragarambler.blogspot.com                      
+ [96] proof-proofpositive.blogspot.com              
+ [97] delawareintellectualproperty.foxrothschild.com
+ [98] news.intelwire.com                            
+ [99] bonoboathome.blogspot.com                     
+[100] latinopoliticsblog.com                        
+[101] patriotboy.blogspot.com                       
+[102] poweroftheindividual.blogspot.com             
+[103] moretexastruth.blogspot.com                   
+[104] bitchkittie.blogspot.com                      
+[105] garciamedialife.com                           
+[106] theoligarchkings.wordpress.com                
+[107] discernthesignsofthetimes.blogspot.com        
+[108] csmalerich.wordpress.com                      
+[109] bdcburmaitalian.wordpress.com                 
+[110] absolutezerounites.blogspot.com               
+[111] bethwellington.blogspot.com                   
+[112] scaredmonkeys.com                             
+[113] winefredswell.blogspot.com                    
+[114] www.tatehausman.com                           
+[115] www.turningleft.net                           
+[116] windconcernsontario.wordpress.com             
+[117] thejobbingdoctor.blogspot.com                 
+[118] crimeincharlotte.blogspot.com                 
+[119] calvacca.blogspot.com                         
+[120] www.humanlifematters.org                      
+[121] energy.nationaljournal.com                    
+[122] laurendo.wordpress.com                        
+[123] robcrilly.wordpress.com                       
+[124] www.chavezcode.com                            
+[125] www.robertamsterdam.com                       
+[126] radioactiveliberty.com                        
+[127] gdaeman.blogspot.com                          
+[128] countenance.wordpress.com                     
+[129] chicksontheright.com                          
+[130] bookdonkey.blogspot.com                       
+[131] snippits-and-slappits.blogspot.com            
+[132] dimechimes.wordpress.com                      
+[133] federalcrimesblog.com                         
+[134] gayinsaipan.blogspot.com                      
+[135] www.arkansasinjurylawyerblog.com              
+[136] themediabusiness.blogspot.com                 
+[137] unrulymob.blogspot.com                        
+[138] immigrationimpact.com                         
+[139] faawhistleblower.wordpress.com                
+[140] thecheezer.blogspot.com                       
+[141] vimdy.wordpress.com                           
+[142] bloghopenchangery.wordpress.com               
+[143] acesmith.blogspot.com                         
+[144] dflseniors.wordpress.com                      
+[145] newjerseyblog.blogspot.com                    
+[146] kylerklnh.blogspot.com                        
+[147] berrylaker.blogspot.com                       
+[148] cybercrimeatessex.blogspot.com                
+[149] n2vip.wordpress.com                           
+[150] bssandbrninalain.blogspot.com                 
+[151] thenewtraditioncoalition.blogspot.com         
+[152] hardstarboardblog.com                         
+[153] obamafailureandsocialism.blogspot.com         
+[154] andersonatlarge.typepad.com                   
+[155] enigmafoundry.wordpress.com                   
+[156] fladenexp.blogspot.com                        
+[157] nobullu.blogspot.com                          
+[158] canadianinternationalpeaceproject.blogspot.com
+[159] zalandria.wordpress.com                       
+[160] trailerparkparadise.blogspot.com              
+[161] lesforlife.blogspot.com                       
+[162] www.ourholycause.com                          
+[163] www.californiaconservative.org                
+[164] eclecticmeanderings.blogspot.com              
+[165] interestedamerican.blogspot.com               
+[166] mommyblawg.blogspot.com                       
+[167] local29.blogspot.com                          
+[168] werhit-mathenyahu.blogspot.com                
+[169] www.libertysarmy.com                          
+[170] thefoiablog.typepad.com                       
+[171] therebeller.blogspot.com                      
+[172] middlebororemembers.blogspot.com              
+[173] suckersonparade.blogspot.com                  
+[174] stevescomments.wordpress.com                  
+[175] calvinists4conservatism.wordpress.com         
+[176] excited-delirium.blogspot.com                 
+[177] www.article6blog.com                          
+[178] minor-ripper.blogspot.com                     
+[179] ravanoid.blogspot.com                         
+[180] www.theagitator.com                           
+[181] cubajournal.blogspot.com                      
+[182] johnsgraymatters.blogspot.com                 
+[183] natna.wordpress.com                           
+[184] fiftyonelakeshoredrive.blogspot.com           
+[185] realityzone-realityzone.blogspot.com          
+[186] greatbiglies.org                              
+[187] blackoak.wordpress.com                        
+[188] cheladirittaviaerasmarrita.blogspot.com       
+[189] fireleadership.blogspot.com                   
+[190] www.fraterslibertas.com                       
+[191] howardempowered.blogspot.com                  
+[192] thehappyhospitalist.blogspot.com              
+[193] patricknulty.wordpress.com                    
+[194] theoutposting.com                             
+[195] themetropolistimes.com                        
+[196] kristof.blogs.nytimes.com                     
+[197] whyohwhyohwhy.wordpress.com                   
+[198] freedomschool.org                             
+[199] ncsl.typepad.com                              
+[200] adamakirby.wordpress.com                      
+[201] peggypayne.blogspot.com                       
+[202] planetatheism.com                             
+[203] tonypua.blogspot.com                          
+[204] gotcha.co.nz                                  
+[205] lawmarketingsystems.typepad.com               
+[206] thelogicoftruth.blogspot.com                  
+[207] brucekrasting.blogspot.com                    
+[208] bamoonshadow.blogspot.com                     
+[209] www.sargessolutions.com                       
+[210] blog.seculargovernment.us                     
+[211] objective-political-analysis.blogspot.com     
+[212] blog.ecojustice.ca                            
+[213] blog.simeonov.com                             
+[214] hooda-thunkit.blogspot.com                    
+[215] nomattimen.wordpress.com                      
+[216] leftoutside.wordpress.com                     
+[217] ashesblog.com                                 
+[218] www.mudvillegazette.com                       
+[219] sablearm.blogspot.com                         
+[220] europeanreferendum.eu                         
+[221] econlog.econlib.org                           
+[222] scottsblog.simiolsons.com                     
+[223] newjerseypoliticsunusual.blogspot.com         
+[224] cribfromthis.blogspot.com                     
+[225] powerballplace.blogspot.com                   
+[226] fackintruth.typepad.com                       
+[227] freedomfromthepress.net                       
+[228] manchesterclimateaction.wordpress.com         
+[229] georgevanantwerp.com                          
+[230] hellishtruth.blogspot.com                     
+[231] <NA>                                          
+281 Levels: a4theroad.blogspot.com ... zalandria.wordpress.com
+> 	sum(rowSums(x)>0, na.rm=TRUE)
+[1] 230
+> 
+> #How many blogs didn't have any file matches?
+> 	print( "Blogs with no matching files" )
+[1] "Blogs with no matching files"
+> 	C$blog_url[!rowSums(x)>0]
+ [1] jturn.qem.se                  federalistpaupers.com        
+ [3] lrionline.com                 www.bobwaldrop.net           
+ [5] www.tomdispatch.com           www.cofinteract.org          
+ [7] www.technudge.net             www.greenassembly.net        
+ [9] www.lawyersgunsmoneyblog.com  www.salab.blogspot.com       
+[11] creepingsharia.wordpress.com  www.syrlinus.com             
+[13] silentespeaks.com             www.pickledpolitics.com      
+[15] www.dartblog.com              www.improvedclinch.com       
+[17] www.johnconyers.com           ep922nj.blogspot.com         
+[19] politicalwire.com             www.windsofchange.net        
+[21] www.urbaninfidel.blogspot.com www.danburrell.com           
+[23] rayjs.newsvine.com            www.flanews.com              
+[25] www.butthenwhat.com           angryyoungdem.vox.com        
+[27] redstatetownhall.com          www.savethegop.com           
+[29] beachmom.dailykos.com         graceworks.ca                
+[31] waldo.jaquith.org             dani71129.newsvine.com       
+[33] www.washingtonmonthly.com     www.blogpi.net               
+[35] www.eyesonfox.org             www.policyresearchinc.org    
+[37] www.healthreform.maryland.gov luckypuppy.net               
+[39] stonescryout.org              www.midnightplumbers.com     
+[41] www.danebramage.blogspot.com  www.elisamaser.com           
+[43] dda.livejournal.com           uncommonsenseblog.com        
+[45] walt.foreignpolicy.com        www.dvalianza.org            
+[47] scottkeller.org               democracy-project.com        
+[49] sistertoldjah.com             suzyrice.com                 
+[51] <NA>                         
+281 Levels: a4theroad.blogspot.com ... zalandria.wordpress.com
+> 	sum(!rowSums(x)>0, na.rm=TRUE)
+[1] 50
+> 
+> #How many blogs matched files on more than one type?
+> 	print( "Blogs with multiple types matching files" )
+[1] "Blogs with multiple types matching files"
+> 	C$blog_url[rowSums(x>0)>1]
+ [1] larrywho.wordpress.com                bangladeshwatchdog1.wordpress.com    
+ [3] www.themudflats.net                   forthardknox.com                     
+ [5] dougpowers.com                        thefiresidepost.com                  
+ [7] www.undertheconcrete.org              ericbjorlin.wordpress.com            
+ [9] ansley.wordpress.com                  jerseyguy.wordpress.com              
+[11] www.rpa.org                           arabracismislamofascism.wordpress.com
+[13] viviansalama.wordpress.com            everydayecon.wordpress.com           
+[15] illinoisobserver.org                  jaksview3.wordpress.com              
+[17] jmcpherson.wordpress.com              garciamedialife.com                  
+[19] theoligarchkings.wordpress.com        bdcburmaitalian.wordpress.com        
+[21] scaredmonkeys.com                     www.turningleft.net                  
+[23] laurendo.wordpress.com                robcrilly.wordpress.com              
+[25] www.robertamsterdam.com               countenance.wordpress.com            
+[27] dimechimes.wordpress.com              immigrationimpact.com                
+[29] vimdy.wordpress.com                   dflseniors.wordpress.com             
+[31] enigmafoundry.wordpress.com           zalandria.wordpress.com              
+[33] stevescomments.wordpress.com          calvinists4conservatism.wordpress.com
+[35] www.article6blog.com                  www.theagitator.com                  
+[37] natna.wordpress.com                   greatbiglies.org                     
+[39] blackoak.wordpress.com                theoutposting.com                    
+[41] themetropolistimes.com                whyohwhyohwhy.wordpress.com          
+[43] freedomschool.org                     adamakirby.wordpress.com             
+[45] planetatheism.com                     gotcha.co.nz                         
+[47] nomattimen.wordpress.com              leftoutside.wordpress.com            
+[49] ashesblog.com                         georgevanantwerp.com                 
+[51] <NA>                                 
+281 Levels: a4theroad.blogspot.com ... zalandria.wordpress.com
+> 	sum(rowSums(x>0)>1, na.rm=TRUE)
+[1] 50
+> 
+> 
+> 
+> 
+> #Which blog-type pairs had file matches but less than perfect content acquisition?
+> 	v <- (A$total_files>0) & (A$has_content<1)
+> 	paste( A$blog_url, A$blog_type, sep=" ")[v]
+  [1] "northeasttruth.com blogger"                            
+  [2] "larrywho.wordpress.com blogger"                        
+  [3] "larrywho.wordpress.com wordpress"                      
+  [4] "armywifeblog.com blogger"                              
+  [5] "weblog.timoregan.com blogger"                          
+  [6] "bangladeshwatchdog1.wordpress.com blogger"             
+  [7] "bangladeshwatchdog1.wordpress.com wordpress"           
+  [8] "gregmankiw.blogspot.com blogger"                       
+  [9] "themindofanatheist.wordpress.com wordpress"            
+ [10] "www.themudflats.net blogger"                           
+ [11] "www.themudflats.net wordpress"                         
+ [12] "forthardknox.com blogger"                              
+ [13] "forthardknox.com wordpress"                            
+ [14] "theliberalslies.blogspot.com blogger"                  
+ [15] "www.politicalwatchdog.com wordpress"                   
+ [16] "dougpowers.com blogger"                                
+ [17] "dougpowers.com wordpress"                              
+ [18] "migramatters.blogspot.com blogger"                     
+ [19] "thefiresidepost.com blogger"                           
+ [20] "thefiresidepost.com wordpress"                         
+ [21] "www.behindbluelines.com wordpress"                     
+ [22] "www.undertheconcrete.org blogger"                      
+ [23] "www.undertheconcrete.org wordpress"                    
+ [24] "greatlawyer.superseoblog.com blogger"                  
+ [25] "contrariancommentary.blogspot.com blogger"             
+ [26] "govgap.wordpress.com wordpress"                        
+ [27] "ericbjorlin.wordpress.com blogger"                     
+ [28] "ericbjorlin.wordpress.com wordpress"                   
+ [29] "ansley.wordpress.com blogger"                          
+ [30] "ansley.wordpress.com wordpress"                        
+ [31] "jerseyguy.wordpress.com blogger"                       
+ [32] "jerseyguy.wordpress.com wordpress"                     
+ [33] "astrodyke.blogspot.com blogger"                        
+ [34] "pilcrowpress.blogspot.com blogger"                     
+ [35] "indiadoption.blogspot.com blogger"                     
+ [36] "www.rpa.org typepad"                                   
+ [37] "www.rpa.org blogger"                                   
+ [38] "arabracismislamofascism.wordpress.com blogger"         
+ [39] "arabracismislamofascism.wordpress.com wordpress"       
+ [40] "www.enoughenough.org blogger"                          
+ [41] "blog.sojo.net wordpress"                               
+ [42] "realtruthonline.blogspot.com blogger"                  
+ [43] "viviansalama.wordpress.com blogger"                    
+ [44] "viviansalama.wordpress.com wordpress"                  
+ [45] "cyberray-rays.blogspot.com blogger"                    
+ [46] "parkprivatization.com blogger"                         
+ [47] "everydayecon.wordpress.com blogger"                    
+ [48] "everydayecon.wordpress.com wordpress"                  
+ [49] "politicalcartel.org wordpress"                         
+ [50] "www.nondomesticatedthinker.com blogger"                
+ [51] "pmbcomments.blogspot.com blogger"                      
+ [52] "dssfeed.blogspot.com blogger"                          
+ [53] "boogeymanchronicles.blogspot.com blogger"              
+ [54] "patrickmurfin.livejournal.com blogger"                 
+ [55] "illinoisobserver.org blogger"                          
+ [56] "illinoisobserver.org wordpress"                        
+ [57] "jaksview3.wordpress.com blogger"                       
+ [58] "jaksview3.wordpress.com wordpress"                     
+ [59] "jmcpherson.wordpress.com blogger"                      
+ [60] "jmcpherson.wordpress.com wordpress"                    
+ [61] "alas-a-llama.livejournal.com blogger"                  
+ [62] "delawareintellectualproperty.foxrothschild.com blogger"
+ [63] "news.intelwire.com blogger"                            
+ [64] "latinopoliticsblog.com wordpress"                      
+ [65] "garciamedialife.com blogger"                           
+ [66] "garciamedialife.com wordpress"                         
+ [67] "theoligarchkings.wordpress.com blogger"                
+ [68] "theoligarchkings.wordpress.com wordpress"              
+ [69] "discernthesignsofthetimes.blogspot.com blogger"        
+ [70] "csmalerich.wordpress.com wordpress"                    
+ [71] "bdcburmaitalian.wordpress.com blogger"                 
+ [72] "bdcburmaitalian.wordpress.com wordpress"               
+ [73] "scaredmonkeys.com blogger"                             
+ [74] "scaredmonkeys.com wordpress"                           
+ [75] "www.tatehausman.com blogger"                           
+ [76] "www.turningleft.net blogger"                           
+ [77] "www.turningleft.net wordpress"                         
+ [78] "windconcernsontario.wordpress.com wordpress"           
+ [79] "crimeincharlotte.blogspot.com blogger"                 
+ [80] "energy.nationaljournal.com blogger"                    
+ [81] "laurendo.wordpress.com blogger"                        
+ [82] "laurendo.wordpress.com wordpress"                      
+ [83] "robcrilly.wordpress.com blogger"                       
+ [84] "robcrilly.wordpress.com wordpress"                     
+ [85] "www.robertamsterdam.com typepad"                       
+ [86] "www.robertamsterdam.com blogger"                       
+ [87] "radioactiveliberty.com blogger"                        
+ [88] "countenance.wordpress.com blogger"                     
+ [89] "countenance.wordpress.com wordpress"                   
+ [90] "chicksontheright.com wordpress"                        
+ [91] "dimechimes.wordpress.com blogger"                      
+ [92] "dimechimes.wordpress.com wordpress"                    
+ [93] "federalcrimesblog.com wordpress"                       
+ [94] "www.arkansasinjurylawyerblog.com blogger"              
+ [95] "unrulymob.blogspot.com blogger"                        
+ [96] "immigrationimpact.com blogger"                         
+ [97] "immigrationimpact.com wordpress"                       
+ [98] "faawhistleblower.wordpress.com wordpress"              
+ [99] "vimdy.wordpress.com blogger"                           
+[100] "vimdy.wordpress.com wordpress"                         
+[101] "bloghopenchangery.wordpress.com wordpress"             
+[102] "acesmith.blogspot.com blogger"                         
+[103] "dflseniors.wordpress.com blogger"                      
+[104] "newjerseyblog.blogspot.com blogger"                    
+[105] "n2vip.wordpress.com wordpress"                         
+[106] "hardstarboardblog.com blogger"                         
+[107] "enigmafoundry.wordpress.com blogger"                   
+[108] "enigmafoundry.wordpress.com wordpress"                 
+[109] "zalandria.wordpress.com blogger"                       
+[110] "zalandria.wordpress.com wordpress"                     
+[111] "www.californiaconservative.org blogger"                
+[112] "www.libertysarmy.com blogger"                          
+[113] "stevescomments.wordpress.com blogger"                  
+[114] "calvinists4conservatism.wordpress.com blogger"         
+[115] "calvinists4conservatism.wordpress.com wordpress"       
+[116] "www.article6blog.com blogger"                          
+[117] "www.article6blog.com wordpress"                        
+[118] "www.theagitator.com blogger"                           
+[119] "www.theagitator.com wordpress"                         
+[120] "natna.wordpress.com blogger"                           
+[121] "natna.wordpress.com wordpress"                         
+[122] "greatbiglies.org blogger"                              
+[123] "greatbiglies.org wordpress"                            
+[124] "blackoak.wordpress.com blogger"                        
+[125] "blackoak.wordpress.com wordpress"                      
+[126] "howardempowered.blogspot.com blogger"                  
+[127] "theoutposting.com blogger"                             
+[128] "theoutposting.com wordpress"                           
+[129] "themetropolistimes.com blogger"                        
+[130] "themetropolistimes.com wordpress"                      
+[131] "kristof.blogs.nytimes.com wordpress"                   
+[132] "whyohwhyohwhy.wordpress.com blogger"                   
+[133] "whyohwhyohwhy.wordpress.com wordpress"                 
+[134] "freedomschool.org blogger"                             
+[135] "freedomschool.org wordpress"                           
+[136] "adamakirby.wordpress.com blogger"                      
+[137] "adamakirby.wordpress.com wordpress"                    
+[138] "planetatheism.com blogger"                             
+[139] "planetatheism.com wordpress"                           
+[140] "gotcha.co.nz blogger"                                  
+[141] "gotcha.co.nz wordpress"                                
+[142] "lawmarketingsystems.typepad.com typepad"               
+[143] "thelogicoftruth.blogspot.com blogger"                  
+[144] "blog.seculargovernment.us blogger"                     
+[145] "blog.simeonov.com wordpress"                           
+[146] "hooda-thunkit.blogspot.com blogger"                    
+[147] "nomattimen.wordpress.com blogger"                      
+[148] "nomattimen.wordpress.com wordpress"                    
+[149] "leftoutside.wordpress.com blogger"                     
+[150] "leftoutside.wordpress.com wordpress"                   
+[151] "ashesblog.com blogger"                                 
+[152] "ashesblog.com wordpress"                               
+[153] "www.mudvillegazette.com typepad"                       
+[154] "europeanreferendum.eu blogger"                         
+[155] "econlog.econlib.org typepad"                           
+[156] "powerballplace.blogspot.com blogger"                   
+[157] "freedomfromthepress.net blogger"                       
+[158] "manchesterclimateaction.wordpress.com wordpress"       
+[159] "georgevanantwerp.com blogger"                          
+[160] "georgevanantwerp.com wordpress"                        
+> 
+> #Which blog-type pairs have perfect content acquisition?
+> 	v <- (A$total_files>0) & (A$has_content==1)
+> 	paste( A$blog_url, A$blog_type, sep=" ")[v]
+  [1] "magicvalleymormon.blogspot.com blogger"                
+  [2] "forumforforeignaffairs.blogspot.com blogger"           
+  [3] "www.growthology.org typepad"                           
+  [4] "antigreen.blogspot.com blogger"                        
+  [5] "www.thewesternlines.com blogger"                       
+  [6] "rowdynation.blogspot.com blogger"                      
+  [7] "a4theroad.blogspot.com blogger"                        
+  [8] "narmer.wordpress.com wordpress"                        
+  [9] "www.feardepartment.com blogger"                        
+ [10] "www.gospelaccordingtohate.com blogger"                 
+ [11] "ulstercountycomptroller.blogspot.com blogger"          
+ [12] "fullcirclereport.blogspot.com blogger"                 
+ [13] "www.american-presidents.org blogger"                   
+ [14] "the-spyglass.blogspot.com blogger"                     
+ [15] "fiddleferme.blogspot.com blogger"                      
+ [16] "nafeez.blogspot.com blogger"                           
+ [17] "macilree.blogspot.com blogger"                         
+ [18] "hope-theologian.blogspot.com blogger"                  
+ [19] "econperspectives.blogspot.com blogger"                 
+ [20] "eyeofthestorm.blogs.com typepad"                       
+ [21] "www.davesblogcentral.com blogger"                      
+ [22] "helmandblog.blogspot.com blogger"                      
+ [23] "gabbygeezer.blogspot.com blogger"                      
+ [24] "hotbmembers.blogspot.com blogger"                      
+ [25] "tachesdhuile.blogspot.com blogger"                     
+ [26] "tomnelson.blogspot.com blogger"                        
+ [27] "theweakerparty.blogspot.com blogger"                   
+ [28] "njopengovt.blogspot.com blogger"                       
+ [29] "greedybastardsclub.blogspot.com blogger"               
+ [30] "globalwarmingwatch.blogspot.com blogger"               
+ [31] "epolicy.blogspot.com blogger"                          
+ [32] "planningadvisor.wordpress.com wordpress"               
+ [33] "democurmudgeon.blogspot.com blogger"                   
+ [34] "shadowedforest.blogspot.com blogger"                   
+ [35] "arthurcohen.blogspot.com blogger"                      
+ [36] "bradleysmithsblog.blogspot.com blogger"                
+ [37] "advocatefornurses.typepad.com typepad"                 
+ [38] "threshinggrain.blogspot.com blogger"                   
+ [39] "www.thunderrun.us blogger"                             
+ [40] "www.mednauseam.com blogger"                            
+ [41] "www.mormonlawyers.com blogger"                         
+ [42] "ninjanun.blogspot.com blogger"                         
+ [43] "studentsforliberty.blogspot.com blogger"               
+ [44] "joshuapundit.blogspot.com blogger"                     
+ [45] "freedomain.blogspot.com blogger"                       
+ [46] "peakoilquestionoftheday.blogspot.com blogger"          
+ [47] "morielbealertblog.blogspot.com blogger"                
+ [48] "pomoprophet.blogspot.com blogger"                      
+ [49] "dodocanspell.blogspot.com blogger"                     
+ [50] "yourblackpolitics.blogspot.com blogger"                
+ [51] "ragarambler.blogspot.com blogger"                      
+ [52] "proof-proofpositive.blogspot.com blogger"              
+ [53] "bonoboathome.blogspot.com blogger"                     
+ [54] "patriotboy.blogspot.com blogger"                       
+ [55] "poweroftheindividual.blogspot.com blogger"             
+ [56] "moretexastruth.blogspot.com blogger"                   
+ [57] "bitchkittie.blogspot.com blogger"                      
+ [58] "absolutezerounites.blogspot.com blogger"               
+ [59] "bethwellington.blogspot.com blogger"                   
+ [60] "winefredswell.blogspot.com blogger"                    
+ [61] "thejobbingdoctor.blogspot.com blogger"                 
+ [62] "calvacca.blogspot.com blogger"                         
+ [63] "www.humanlifematters.org blogger"                      
+ [64] "www.chavezcode.com blogger"                            
+ [65] "gdaeman.blogspot.com blogger"                          
+ [66] "bookdonkey.blogspot.com blogger"                       
+ [67] "snippits-and-slappits.blogspot.com blogger"            
+ [68] "gayinsaipan.blogspot.com blogger"                      
+ [69] "themediabusiness.blogspot.com blogger"                 
+ [70] "thecheezer.blogspot.com blogger"                       
+ [71] "dflseniors.wordpress.com wordpress"                    
+ [72] "kylerklnh.blogspot.com blogger"                        
+ [73] "berrylaker.blogspot.com blogger"                       
+ [74] "cybercrimeatessex.blogspot.com blogger"                
+ [75] "bssandbrninalain.blogspot.com blogger"                 
+ [76] "thenewtraditioncoalition.blogspot.com blogger"         
+ [77] "obamafailureandsocialism.blogspot.com blogger"         
+ [78] "andersonatlarge.typepad.com typepad"                   
+ [79] "fladenexp.blogspot.com blogger"                        
+ [80] "nobullu.blogspot.com blogger"                          
+ [81] "canadianinternationalpeaceproject.blogspot.com blogger"
+ [82] "trailerparkparadise.blogspot.com blogger"              
+ [83] "lesforlife.blogspot.com blogger"                       
+ [84] "www.ourholycause.com blogger"                          
+ [85] "eclecticmeanderings.blogspot.com blogger"              
+ [86] "interestedamerican.blogspot.com blogger"               
+ [87] "mommyblawg.blogspot.com blogger"                       
+ [88] "local29.blogspot.com blogger"                          
+ [89] "werhit-mathenyahu.blogspot.com blogger"                
+ [90] "thefoiablog.typepad.com typepad"                       
+ [91] "therebeller.blogspot.com blogger"                      
+ [92] "middlebororemembers.blogspot.com blogger"              
+ [93] "suckersonparade.blogspot.com blogger"                  
+ [94] "stevescomments.wordpress.com wordpress"                
+ [95] "excited-delirium.blogspot.com blogger"                 
+ [96] "minor-ripper.blogspot.com blogger"                     
+ [97] "ravanoid.blogspot.com blogger"                         
+ [98] "cubajournal.blogspot.com blogger"                      
+ [99] "johnsgraymatters.blogspot.com blogger"                 
+[100] "fiftyonelakeshoredrive.blogspot.com blogger"           
+[101] "realityzone-realityzone.blogspot.com blogger"          
+[102] "cheladirittaviaerasmarrita.blogspot.com blogger"       
+[103] "fireleadership.blogspot.com blogger"                   
+[104] "www.fraterslibertas.com blogger"                       
+[105] "thehappyhospitalist.blogspot.com blogger"              
+[106] "patricknulty.wordpress.com wordpress"                  
+[107] "ncsl.typepad.com typepad"                              
+[108] "peggypayne.blogspot.com blogger"                       
+[109] "tonypua.blogspot.com blogger"                          
+[110] "brucekrasting.blogspot.com blogger"                    
+[111] "bamoonshadow.blogspot.com blogger"                     
+[112] "www.sargessolutions.com blogger"                       
+[113] "objective-political-analysis.blogspot.com blogger"     
+[114] "blog.ecojustice.ca blogger"                            
+[115] "sablearm.blogspot.com blogger"                         
+[116] "scottsblog.simiolsons.com blogger"                     
+[117] "newjerseypoliticsunusual.blogspot.com blogger"         
+[118] "cribfromthis.blogspot.com blogger"                     
+[119] "fackintruth.typepad.com typepad"                       
+[120] "hellishtruth.blogspot.com blogger"                     
+> 	sum( v, na.rm=TRUE )
+[1] 120
+> 
+> 	print( "Percent with content acquisition" )
+[1] "Percent with content acquisition"
+> 	(sum( v, na.rm=TRUE ) - sum(duplicated(A$blog_url[v]))) /length(C$blog_url)
+[1] 0.4270463
+> 	#Note: the "duplicated" bit is to make sure that blogs with perfect content matching on more than one type will not throw off the percentage.  This is unlikely, but possible.
+> 
+> #Which blog-type pairs have perfect date acquisition?
+> #Which blog-type pairs have perfect title acquisition?
+> #Which blog-type pairs have perfect lables acquisition?
+> #Which blog-type pairs have perfect comments acquisition?
+> 
+> 
+> 
+> 
+> 
+> #Timing
+> #This doesn't work...
+> 	T <- as.numeric(strsplit( as.character(A$file_match_time_elapsed), "[:]" ))

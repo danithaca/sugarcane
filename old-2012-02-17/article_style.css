@@ -1,0 +1,24 @@
+body{
+  font-family: verdana, arial, san serif;
+  font-size:14pt;
+}
+
+div.document{
+  width:650px;
+  margin-left:auto;
+  margin-right:auto;
+  padding:30px;
+  border: 2px solid #bbb;
+}
+div.document-header{
+  border-bottom: 2px dashed #bbb;
+}
+div.document-content{}
+
+div.document-header div{
+  padding:20px;
+}
+.title{
+  font-size:20pt;
+}
+

@@ -1,0 +1,6 @@
+
+Figure out httrack
+Figure out program architecture (Queues and logging)
+Get final sample
+Figure out files to exclude
+Run!

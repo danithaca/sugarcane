@@ -1,0 +1,34 @@
+wget -mk -w 5 -t 3 -T 30 -i [input_file] -o [output_file] -P /scratch/unmirrored5/agong/blog_panel_crawl
+
+-m	mirror
+-k	convert links for local browsing
+-w	wait 5 seconds between downloads
+-t	retry 3 times
+-T	timeout after 30 seconds
+-i	list of site urls
+-o	write output to this file
+-P	store to this directory
+
+
+wget -mk [site_url] -w 5 -t 3 -T 30 -o [output_file] -P /scratch/unmirrored5/agong/blog_panel_crawl
+
+-m	mirror
+-k	convert links for local browsing
+-w	wait 5 seconds between downloads
+-t	retry 3 times
+-T	timeout after 30 seconds
+-o	write output to this file
+-P	store to this directory
+
+
+http://www.gnu.org/software/wget/manual/wget.html#Spanning-Hosts
+If you wish Wget to keep a mirror of a page (or ftp subdirectories), use ‘--mirror’ (‘-m’), which is the shorthand for ‘-r -l inf -N’. You can put Wget in the crontab file asking it to recheck a site each Sunday:
+
+          crontab
+          0 0 * * 0 wget --mirror http://www.gnu.org/ -o /home/me/weeklog
+
+
+       -o logfile
+       --output-file=logfile
+           Log all messages to logfile.  The messages are normally reported to standard error.
+

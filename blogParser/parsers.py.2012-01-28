@@ -1,0 +1,119 @@
+import datetime, urllib2
+import lxml.etree as etree
+import lxml.html
+
+import utilities
+from profiler import profiledParser
+from validator import validatedParser, checkFields
+
+html_parser = etree.HTMLParser()
+
+
+class BlogParser(object):
+	def parseBlog(self, url=None, filepath=None, verbose=False): pass
+	def parsePost(self, text, verbose=False): pass
+
+class MappedBlogParser(BlogParser):
+	def parseBlog(self, url=None, filepath=None, verbose=False):
+		self.setExpressions( url )
+		
+		#Create a root xml node
+		blog_xml = etree.Element( "blog" )
+		#blog_xml.set( "blog_name", url )
+		blog_xml.set( "parser", str(self.__class__))
+		blog_xml.set( "parse_date", str(datetime.datetime.now()) )
+		
+		post_urls = self.mapPostPages(url=url, filepath=filepath)
+		for p in post_urls:
+			text = self.getPostText(url=p)
+			post_xml = parsePostText( text )
+			
+		return blog_xml
+
+	def setExpressions(self, url=None, filepath=None): pass
+	def mapPostPages(self, url=None, filepath=None): pass
+	def parsePostFromUrl(self, url): pass
+	def parsePostFromFilename(self, filename): pass
+
+class IterativeBlogParser(BlogParser):
+	def parseBlogIteratively(self):
+		pass
+	
+	def getFirstPost(self, url): pass
+	def getNextPost(self, url): pass
+
+
+@profiledParser
+@validatedParser
+class BlogspotParserA( MappedBlogParser ):
+	
+	fields_xpath = {
+		"post" : "//div[@class='post-outer']",
+		"date" : "//h2[@class='date-header']",
+		"title" : "//h3[@class='post-title entry-title']",
+#		"author" : "",
+#		"labels" : "",
+#		"comment_count" : "//h4",
+	}
+	
+	def setExpressions(self, url=None, filepath=None):
+		self.post_pages_regex = url+"[0-9]*/[0-9]*/.*?\.html"
+		self.archive_pages_regex = url+"[0-9]+_[0-9]+_[0-9]+_archive.html"
+
+#http://lowlywonk.blogspot.com/search?updated-min=2011-01-01T00:00:00-08:00&updated-max=2012-01-01T00:00:00-08:00&max-results=50
+#//a[@class='post-count-link']
+	
+	def mapPostPages(self, url=None, filepath=None):
+		text = urllib2.urlopen( url ).read()
+		H = lxml.html.fromstring(text)
+		
+		#for x in self.post_pages_xpath:
+		urls = H.xpath('//a/@href')
+		for u in urls: print u
+		print len(urls)
+		
+		post_urls = utilities.filterByRegex(urls, self.post_pages_regex )
+		print len(post_urls)
+	
+		archive_urls = utilities.filterByRegex(urls, self.archive_pages_regex )
+		print len(archive_urls)
+		
+		print self.archive_pages_regex
+		return []
+	
+	def parsePostPage(self, text, verbose=False):
+		H = lxml.html.fromstring(text)
+		#H = etree.parse( filename, html_parser)
+
+		post_xml = etree.Element( "post" )
+
+		for field in self.fields_xpath:
+			try:
+				X = H.xpath(self.fields_xpath[field])[0]
+				e = etree.SubElement( post_xml, field )
+				e.text = etree.tostring( X, pretty_print=True)
+			except:
+				pass
+
+		return post_xml
+
+
+if __name__ == "__main__":
+	BlogspotParserA().parseBlog(url="http://lowlywonk.blogspot.com/")
+	
+"""
+	import glob
+	
+	path = '/home/agong/Documents/blog_profiler/pol_blog_front_pages_2012-01-03/suffixed_files/'
+	F = glob.glob( path+'*' )
+	F2 = utilities.filterByRegex( F, 'blogspot' )
+
+	B = BlogspotParserA()
+
+	X = [ B.parsePage(f) for f in F2[:10] ]
+	#etree.tostring( B.parsePage(f), pretty_print=False )
+	
+	print checkFields(B, None)
+	for x in X:
+		print checkFields(B,x)	
+"""

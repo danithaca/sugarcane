@@ -1,0 +1,53 @@
+Notes on switching to scrapy
+
+These are the two SO questions that convinved me to learn scrapy
+    http://stackoverflow.com/questions/6283271/is-it-worth-learning-scrapy
+    http://stackoverflow.com/questions/5914046/ruby-alternative-to-scrapy
+
+http://stackoverflow.com/questions/2396529/using-one-scrapy-spider-for-several-websites
+
+http://doc.scrapy.org/en/latest/intro/tutorial.html#intro-tutorial
+
+http://stackoverflow.com/questions/6682503/click-a-button-in-scrapy
+
+
+=== How does scrapy ...? ===
+
+...handle timeouts and servers that refuse to time out?
+    This is supported.
+    http://doc.scrapy.org/en/latest/topics/downloader-middleware.html#module-scrapy.contrib.downloadermiddleware.downloadtimeout
+
+    I ran into trouble with timeouts in snowcrawl: urllib2's timeout functions didn't work in the case of servers that responded, but returned the page extremely slowly.  In the end, I figured out a fix using interruptable threads.  Looks like I could reimplement the same fix here by overwriting the middleware.
+
+...parse xpath?  Are there dependencies?
+    It looks like they've built a custom library, based on libxml2.  Good enough for me.  And you can always integrate lxml if you want.
+
+    http://stackoverflow.com/questions/6283271/is-it-worth-learning-scrapy
+
+...handle parallelization?
+    It doesn't AFAICT.  scrapyd allows you to schedule tasks, but not distribute them.  This could be a pain point... But at worst, you could write bash scripts to run separate parsers on separate machines, or set up multiple scrapyd instances and use a scheduler to ping them on a schedule.
+
+    http://groups.google.com/group/scrapy-users/browse_thread/thread/92a27143b5bbd6fd
+
+...handle multiple sites?
+    Looks like no trouble to instantiate multiple spiders, or allow a single spider to crawl more than one site
+
+...handle updating over repeated crawls?
+    Basic functionality is not a problem.
+
+    http://stackoverflow.com/questions/3871613/scrapy-how-to-identify-already-scraped-urls
+
+...help me munge faster?
+    Scrapy allows you to test selectors in the shell --- very nice functionality.  It's a small bonus that you get to test your selectors on exactly the same HTML/XML that scrapy sees, rather than on, say, the slightly different DOM tree rendered by Firefox.
+
+...do local parsing (ie. parsing of sites mirrored to a local disc)?
+    It doesn't, AFAICT.  I'd have to build this part myself.
+
+...handle certification?
+    One of the big problems with crawling is that it's very hard to be sure a crawler will *always* work.  It's not enough to know that it worked on one page or 20 pages -- you want to know that it worked on *every* page.  Unfortunately, "certifying" that your crawler worked on every page is really tough.
+
+    It doesn't AFAICT.
+
+
+.. store its data?
+

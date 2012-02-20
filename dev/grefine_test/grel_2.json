@@ -1,0 +1,151 @@
+[{
+    "op":"core/column-rename",
+    "description":"Rename column Column 1 to blog_path",
+    "oldColumnName":"Column 1",
+    "newColumnName":"blog_path"
+  },
+  {
+    "op":"core/column-addition-by-fetching-urls",
+    "description":"Create column results at index 1 by fetching URLs based on column blog_path using expression grel:\"http://localhost:8000/sugarcane/?parser=BlogspotParserA&blog=\"+value",
+    "engineConfig":{
+      "facets":[],
+      "mode":"row-based"
+    },
+    "newColumnName":"results",
+    "columnInsertIndex":1,
+    "baseColumnName":"blog_path",
+    "urlExpression":"grel:\"http://localhost:8000/sugarcane/?parser=BlogspotParserA&blog=\"+value",
+    "onError":"set-to-blank",
+    "delay":0
+  },
+  {
+    "op":"core/column-addition",
+    "description":"Create column title_xpath at index 2 based on column results using expression grel:parseJson(value)[\"title\"][\"xpath\"]",
+    "engineConfig":{
+      "facets":[],
+      "mode":"row-based"
+    },
+    "newColumnName":"title_xpath",
+    "columnInsertIndex":2,
+    "baseColumnName":"results",
+    "expression":"grel:parseJson(value)[\"title\"][\"xpath\"]",
+    "onError":"set-to-blank"
+  },
+  {
+    "op":"core/column-addition",
+    "description":"Create column title_cleaner at index 2 based on column results using expression grel:parseJson(value)[\"results\"][\"cleaner\"]",
+    "engineConfig":{
+      "facets":[],
+      "mode":"row-based"
+    },
+    "newColumnName":"title_cleaner",
+    "columnInsertIndex":3,
+    "baseColumnName":"results",
+    "expression":"grel:parseJson(value)[\"title\"][\"cleaner\"]",
+    "onError":"set-to-blank"
+  },
+  {
+    "op":"core/column-addition",
+    "description":"Create column author_xpath at index 2 based on column results using expression grel:parseJson(value)[\"author\"][\"xpath\"]",
+    "engineConfig":{
+      "facets":[],
+      "mode":"row-based"
+    },
+    "newColumnName":"author_xpath",
+    "columnInsertIndex":4,
+    "baseColumnName":"results",
+    "expression":"grel:parseJson(value)[\"author\"][\"xpath\"]",
+    "onError":"set-to-blank"
+  },
+  {
+    "op":"core/column-addition",
+    "description":"Create column author_cleaner at index 2 based on column results using expression grel:parseJson(value)[\"author\"][\"cleaner\"]",
+    "engineConfig":{
+      "facets":[],
+      "mode":"row-based"
+    },
+    "newColumnName":"author_cleaner",
+    "columnInsertIndex":5,
+    "baseColumnName":"results",
+    "expression":"grel:parseJson(value)[\"author\"][\"cleaner\"]",
+    "onError":"set-to-blank"
+  },
+  {
+    "op":"core/column-addition",
+    "description":"Create column date_xpath at index 2 based on column results using expression grel:parseJson(value)[\"date\"][\"xpath\"]",
+    "engineConfig":{
+      "facets":[],
+      "mode":"row-based"
+    },
+    "newColumnName":"date_xpath",
+    "columnInsertIndex":6,
+    "baseColumnName":"results",
+    "expression":"grel:parseJson(value)[\"date\"][\"xpath\"]",
+    "onError":"set-to-blank"
+  },
+  {
+    "op":"core/column-addition",
+    "description":"Create column date_cleaner at index 2 based on column results using expression grel:parseJson(value)[\"date\"][\"cleaner\"]",
+    "engineConfig":{
+      "facets":[],
+      "mode":"row-based"
+    },
+    "newColumnName":"date_cleaner",
+    "columnInsertIndex":7,
+    "baseColumnName":"results",
+    "expression":"grel:parseJson(value)[\"date\"][\"cleaner\"]",
+    "onError":"set-to-blank"
+  },
+  {
+    "op":"core/column-addition",
+    "description":"Create column content_xpath at index 2 based on column results using expression grel:parseJson(value)[\"content\"][\"xpath\"]",
+    "engineConfig":{
+      "facets":[],
+      "mode":"row-based"
+    },
+    "newColumnName":"content_xpath",
+    "columnInsertIndex":8,
+    "baseColumnName":"results",
+    "expression":"grel:parseJson(value)[\"content\"][\"xpath\"]",
+    "onError":"set-to-blank"
+  },
+  {
+    "op":"core/column-addition",
+    "description":"Create column content_cleaner at index 2 based on column results using expression grel:parseJson(value)[\"content\"][\"cleaner\"]",
+    "engineConfig":{
+      "facets":[],
+      "mode":"row-based"
+    },
+    "newColumnName":"content_cleaner",
+    "columnInsertIndex":9,
+    "baseColumnName":"results",
+    "expression":"grel:parseJson(value)[\"content\"][\"cleaner\"]",
+    "onError":"set-to-blank"
+  },
+  {
+    "op":"core/column-addition",
+    "description":"Create column comment-count_xpath at index 2 based on column results using expression grel:parseJson(value)[\"xpath\"]",
+    "engineConfig":{
+      "facets":[],
+      "mode":"row-based"
+    },
+    "newColumnName":"comment-count_xpath",
+    "columnInsertIndex":10,
+    "baseColumnName":"results",
+    "expression":"grel:parseJson(value)[\"comment-count\"][\"xpath\"]",
+    "onError":"set-to-blank"
+  },
+  {
+    "op":"core/column-addition",
+    "description":"Create column comment-count_cleaner at index 2 based on column results using expression grel:parseJson(value)[\"cleaner\"]",
+    "engineConfig":{
+      "facets":[],
+      "mode":"row-based"
+    },
+    "newColumnName":"comment-count_cleaner",
+    "columnInsertIndex":11,
+    "baseColumnName":"results",
+    "expression":"grel:parseJson(value)[\"comment-count\"][\"cleaner\"]",
+    "onError":"set-to-blank"
+  }
+]

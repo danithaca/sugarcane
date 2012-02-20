@@ -1,0 +1,16 @@
+/scratch/scratch1/agong/polblogs
+	Blogger blogs (xml/csv)
+	I believe these are blogger blogs that were highly ranked in technorati's list.  Dates weren't parsed in most cases.
+
+
+/scratch/unmirrored5/agong
+/scratch/scratch2/agong/my_old_stuff/Dropbox/semester_files/hPhD/web_data_collection/pythonBlogParsing/blogProfiler
+	The list of intended downloads is contained in blog_list.txt in the second folder. (n = 823). I'm not sure how these sites were chosen---I think they may be the smapling frame for the Dec. survey test. Not all downloads are complete.
+
+	See diagnostics.r for info: 122 of 281 claim to be parsed.
+	
+
+/users/agong/Dropbox/active_projects/top50_crawlers
+	daily_kos
+	fdl
+	malkin
