@@ -206,8 +206,10 @@ class BlogParser(object):
         doc_div.append(doc_content)
 
         return doc_div
-        
 
+
+from . blogspot_a import *        
+"""
 
 @profiledParser
 class BlogspotParserA( BlogParser ):
@@ -365,3 +367,4 @@ class NewsvineParserA( BlogParser ):
 class LiveJournalParserA( BlogParser ):
     map_glob = '[0-9][0-9][0-9][0-9]/[0-9][0-9]/[0-9][0-9]/*.html'
 
+"""
