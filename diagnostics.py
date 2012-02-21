@@ -8,43 +8,6 @@ output_path = 'nothing-here-yet!!'
 
 
 """
-#! This is all legacy code -- useful, but possibly not up to snuff ############
-
-def check_one_parser(blog, parser):
-    P = parser_registry[parser]()
-    posts = P.mapPostFiles(blog)
-    return len(posts)
-
-def check_all_parsers(blog):
-    results = {}
-    for p in parser_registry:
-        results[p] = check_one_parser(blog, p)
-
-    return results
-
-def test_mapper( blogs, parser, shuffle=False, max_blogs=None ):
-    if shuffle:
-        random.shuffle(blogs)
-        
-    if max_blogs:
-        blogs = blogs[:max_blogs]
-
-    for (i,blog) in enumerate(blogs):
-        result = check_one_parser(blog, parser)
-        row = [i, result, blog.split('/')[-1], blog, datetime.datetime.now()]
-        print '\t'.join([str(r) for r in row])
-
-def count_blog_files( blog ):
-    count = 0#fileList = []
-#    rootdir = blog#sys.argv[1]
-    for root, subFolders, files in os.walk(blog):
-        for file in files:
-            count += 1#fileList.append(os.path.join(root,file))
-    return count
-
-
-#! End legacy code ############################################################
-
 def test_parser_on_blog_list( parser, blogs, detailed_csv=None, summary_csv=None, k=20, verbose=False, shuffle=False ):
     if detailed_csv:
         header = ['blog', 'post_file' ]
@@ -145,37 +108,8 @@ def test_parser_on_one_blog( parser, blog, break_on_mistake=False, max_posts=Non
     print log_url+"temp.html"
 #    firefox(log_path+"temp.html")
     
-
-
     return 1
 
-def test_all_mappers(blogs, store_results=False, shuffle=False, max_blogs=None):
-    if store_results:
-        G = glob.glob(log_path+'map-test-*.csv')
-        C = csv.writer(file(log_path+'map-test-'+str(len(G)+1)+'.csv', 'w'))
-        C.writerow( ['index', 'file_count'] + [p for p in parser_registry] + ['blog', 'filepath', 'timestamp'] )
-
-    if shuffle:
-        random.shuffle(blogs)
-        
-    if max_blogs:
-        blogs = blogs[:max_blogs]
-
-    print '\t'.join(['index', 'file_count']+[p for p in parser_registry])
-
-    for (i,blog) in enumerate(blogs):
-        results = check_all_parsers(blog)
-        row = [i, count_blog_files(blog)] + [results[p] for p in parser_registry] + \
-            [
-                blog.split('/')[-1],
-                blog,
-                datetime.date.strftime(datetime.datetime.now(), "%Y/%m/%d %H:%M:%S")
-            ]
-        print '\t'.join([str(r) for r in row])
-#        print '\t'.join( [str(r) for r in [i] + [results[p] for p in parser_registry] + [blog.split('/')[-1]] ])
-
-        if store_results:
-            C.writerow( row )
 """
 
 def list_parsers():
@@ -188,9 +122,10 @@ def list_parsers():
 
 def main(argv=None):
 
-#    blogs = file('data/um1-completed-blogs.txt','r').read()[:-1].split('\n')
+    blogs = file('data/um1-completed-blogs.txt','r').read()[:-1].split('\n')
 #    blogs = file('data/um1-blogspot-blogs.txt','r').read()[:-1].split('\n')
-    blogs = file('data/um1-wordpress-blogs.txt','r').read()[:-1].split('\n')
+#    blogs = file('data/um1-wordpress-blogs.txt','r').read()[:-1].split('\n')
+#    blogs = file('data/blog-short-list.txt','r').read()[:-1].split('\n')
 #    print "\n".join(blogs[:5])
 
     command = argv[1]
@@ -199,7 +134,7 @@ def main(argv=None):
 
     elif command=='test-all-mappers':
         inspector = MapperInspector(blogs, parser_registry)
-        inspector.inspect()
+        inspector.inspect(log_results=True)
 #        test_all_mappers(blogs)
 
     elif command=='test-mapper':

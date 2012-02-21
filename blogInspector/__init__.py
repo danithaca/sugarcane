@@ -1,9 +1,14 @@
-import os, random, datetime
+import os
+import random
+import datetime
+import glob
+import csv
 from copy import deepcopy
 
 log_path = '/users/agong/Desktop/blog-crawl-results/'
 log_url = "http://www.cscs.umich.edu/~agong/blog-crawl-results/"
 
+log_file = log_path+'inspector_logs.txt'
 
 class Inspector(object):
     def __init__(self, blog_list=None, parser_registry=None):
@@ -27,16 +32,15 @@ class Inspector(object):
 
     def init_csv_writer(self, slug, log_path=log_path, header=None):
         G = glob.glob(log_path+slug+'*.csv')
-        C = csv.writer(file(log_path+slug+str(len(G)+1)+'.csv', 'w'))
+        filename = log_path+slug+str(len(G)+1)+'.csv'
+        file_url = log_url+slug+str(len(G)+1)+'.csv'
+        C = csv.writer(file(filename, 'w'))
 
         if header:
             C.writerow(header)
 
-        return C
+        return (filename, file_url, C)
 
-    def inspect(self, shuffle=False, max_posts=20,
-        log_results=False, exceptions=None):
-        pass
 
 
 class MapperInspector(Inspector):
@@ -46,16 +50,16 @@ class MapperInspector(Inspector):
         return len(posts)
         
     def count_blog_files(self, blog):
-        count = 0#fileList = []
-    #    rootdir = blog#sys.argv[1]
+        count = 0
         for root, subFolders, files in os.walk(blog):
             for file in files:
-                count += 1#fileList.append(os.path.join(root,file))
+                count += 1
         return count
 
-    def inspect(self, verbose=False, log_results=False, exceptions=None):
+    def inspect(self, log_results=False):
         if log_results:
-            C = init_csv_writer(
+            start_time = datetime.datetime.now()
+            (filename, file_url, C) = self.init_csv_writer(
                     slug='mapper-inspector',
                     header=['index', 'file_count'] +
                         [p for p in self.parser_registry] +
@@ -77,6 +81,23 @@ class MapperInspector(Inspector):
 
             if log_results:
                 C.writerow( row )
+
+
+        if log_results:
+            log_line = "\t".join([
+                self.__class__.__name__,
+                datetime.date.strftime(start_time, "%Y/%m/%d %H:%M:%S"),
+                datetime.date.strftime(datetime.datetime.now(), "%Y/%m/%d %H:%M:%S"),
+                filename,
+                str(len(self.blog_list)),
+            ])
+
+            print '='*80
+            print 'Logged:\t', log_line
+            print 'Output:\t', file_url
+            
+            logger = file(log_file, 'ab')
+            logger.write(log_line)
 
 
 
