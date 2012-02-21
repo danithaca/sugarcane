@@ -1,15 +1,13 @@
 import glob, csv, datetime, sys, inspect, random, os
 from blogParser import parser_registry, field_keys
 from blogParser.utilities import firefox
+from blogInspector import MapperInspector
 
 input_path = '/scratch/unmirrored1/agong/blog_crawl_2012_01/mirrors/'
 output_path = 'nothing-here-yet!!'
-log_path = '/users/agong/Desktop/blog-crawl-results/'
-
-log_url = "http://www.cscs.umich.edu/~agong/blog-crawl-results/"
 
 
-
+"""
 #! This is all legacy code -- useful, but possibly not up to snuff ############
 
 def check_one_parser(blog, parser):
@@ -151,7 +149,7 @@ def test_parser_on_one_blog( parser, blog, break_on_mistake=False, max_posts=Non
 
     return 1
 
-def test_all_mappers( blogs, store_results=False, shuffle=False, max_blogs=None ):
+def test_all_mappers(blogs, store_results=False, shuffle=False, max_blogs=None):
     if store_results:
         G = glob.glob(log_path+'map-test-*.csv')
         C = csv.writer(file(log_path+'map-test-'+str(len(G)+1)+'.csv', 'w'))
@@ -178,6 +176,7 @@ def test_all_mappers( blogs, store_results=False, shuffle=False, max_blogs=None 
 
         if store_results:
             C.writerow( row )
+"""
 
 def list_parsers():
     print '=== Registered parsers: ==='
@@ -199,7 +198,9 @@ def main(argv=None):
         list_parsers()
 
     elif command=='test-all-mappers':
-        test_all_mappers(blogs)
+        inspector = MapperInspector(blogs, parser_registry)
+        inspector.inspect()
+#        test_all_mappers(blogs)
 
     elif command=='test-mapper':
         test_mapper(blogs, argv[2])
