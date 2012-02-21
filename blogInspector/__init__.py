@@ -1,3 +1,4 @@
+import os, random, datetime
 from copy import deepcopy
 
 log_path = '/users/agong/Desktop/blog-crawl-results/'
@@ -39,32 +40,34 @@ class Inspector(object):
 
 
 class MapperInspector(Inspector):
-
     def inspect_blog_mapper_pair(self, blog, parser):
         P = self.parser_registry[parser]()
         posts = P.mapPostFiles(blog)
         return len(posts)
-
-#    def inspect(self, shuffle=False, max_posts=20,
-#        verbose=False, log_results=False, exceptions=None):
+        
+    def count_blog_files(self, blog):
+        count = 0#fileList = []
+    #    rootdir = blog#sys.argv[1]
+        for root, subFolders, files in os.walk(blog):
+            for file in files:
+                count += 1#fileList.append(os.path.join(root,file))
+        return count
 
     def inspect(self, verbose=False, log_results=False, exceptions=None):
         if log_results:
             C = init_csv_writer(
-                    slug='mapper-inspector'
+                    slug='mapper-inspector',
                     header=['index', 'file_count'] +
                         [p for p in self.parser_registry] +
                         ['blog', 'filepath', 'timestamp'],
                 )
 
-#        print '\t'.join(['index', 'file_count']+[p for p in parser_registry])
-
         for (i,blog) in enumerate(self.blog_list):
             results = {}
             for p in self.parser_registry:
-                results[p] = inspect_blog_mapper_pair(blog, p)
+                results[p] = self.inspect_blog_mapper_pair(blog, p)
 
-            row = [i, count_blog_files(blog)] + [results[p] for p in parser_registry] + \
+            row = [i, self.count_blog_files(blog)] + [results[p] for p in self.parser_registry] + \
                 [
                     blog.split('/')[-1],
                     blog,
@@ -72,12 +75,15 @@ class MapperInspector(Inspector):
                 ]
             print '\t'.join([str(r) for r in row])
 
-            if store_results:
+            if log_results:
                 C.writerow( row )
 
 
 
 class ParserInspector(Inspector):
-    pass
+    def inspect(self, shuffle=False, max_posts=20,
+        verbose=False, log_results=False, exceptions=None):
+        pass
+
 
 
