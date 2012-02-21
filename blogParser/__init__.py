@@ -2,10 +2,8 @@ import datetime, glob, re, sys, os, random
 from copy import deepcopy
 import lxml.etree as etree
 from lxml import html
-#from lxml.html.clean import Cleaner
 
 import utilities
-#from profiler import profiledParser, parser_registry
 
 parser_registry = {}
 
@@ -14,7 +12,6 @@ def profiledParser( parser ):
     return parser
 
 
-#html_parser = etree.HTMLParser(remove_blank_text=True)
 xml_parser = etree.XMLParser(remove_blank_text=True)
 
 field_keys = ["title","author","date","content","labels","comment-count"]
@@ -131,7 +128,6 @@ class BlogParser(object):
                     xpath_count = 0
                     clean_success = True
 
-            #From: http://stackoverflow.com/questions/1278705/python-when-i-catch-an-exception-how-do-i-get-the-type-file-and-line-number
             except Exception, err:
                 if verbose:
                     exc_type, exc_obj, exc_tb = sys.exc_info()

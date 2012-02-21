@@ -1,9 +1,6 @@
 import glob, csv, datetime, sys, inspect, random, os
-#from blogParser import parser_registry, field_keys
-#from blogParser import blogspot_a
-#from blogParser.parsers import parser_registry, field_keys
 from blogParser import parser_registry, field_keys
-#from blogParser.utilities import firefox
+from blogParser.utilities import firefox
 
 input_path = '/scratch/unmirrored1/agong/blog_crawl_2012_01/mirrors/'
 output_path = 'nothing-here-yet!!'
