@@ -205,7 +205,7 @@ def main(argv=None):
         test_mapper(blogs, argv[2])
 
     elif command=='test-1x1':
-        test_parser_on_one_blog(parser_registry[argv[2]](), input_path+argv[3], break_on_mistake=True)#, max_posts=20)
+        test_parser_on_one_blog(parser_registry[argv[2]](), input_path+argv[3], break_on_mistake=True, max_posts=20)
 
     elif command=='test-1xMany':
         test_parser_on_blog_list(
