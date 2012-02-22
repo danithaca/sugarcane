@@ -4,6 +4,7 @@ import datetime
 import glob
 import csv
 from copy import deepcopy
+from blogParser import field_keys
 
 log_path = '/users/agong/Desktop/blog-crawl-results/'
 log_url = "http://www.cscs.umich.edu/~agong/blog-crawl-results/"
@@ -30,12 +31,15 @@ class Inspector(object):
         if max_blogs:
             self.blog_list = self.blog_list[:max_blogs]
 
-    def init_csv_writer(self, slug, log_path=log_path, header=None):
+    def init_csv_writer(self, slug=None, log_path=log_path, header=None):
+        if not slug:
+            slug = self.__class__.__name__+'-'
         G = glob.glob(log_path+slug+'*.csv')
+
         filename = log_path+slug+str(len(G)+1)+'.csv'
         file_url = log_url+slug+str(len(G)+1)+'.csv'
-        C = csv.writer(file(filename, 'w'))
 
+        C = csv.writer(file(filename, 'w'))
         if header:
             C.writerow(header)
 
@@ -85,7 +89,7 @@ class MapperInspector(Inspector):
             if log_results:
                 C.writerow( row )
 
-
+        #! This is clunky.  Why make it optional?
         if log_results:
             log_line = "\t".join([
                 self.__class__.__name__,
@@ -103,9 +107,126 @@ class MapperInspector(Inspector):
             logger.write('\n'+log_line)
 
 
-"""
 class ParserInspector(Inspector):
+    def calc_xpath_success(self, results, field):
+        success = 0
+        for post in results:
+            print results[post][field][0:2]
+            if results[post][field][0] == 1:
+                success += 1 
+        return success
 
+    def calc_cleaner_success(self, results, field):
+        success = 0
+        for post in results:
+            if results[post][field][1]:
+                success += 1 
+        return success
+
+    def calc_percent_perfect(self, results):
+        success = 0
+        for post in results:
+            good = True
+            for f in field_keys:
+                if not results[post][f][0] == 1:
+                    good = False
+                if not results[post][f][1] == True:
+                    good = False
+
+            if good:
+                success += 1
+
+        if len(results) > 0:
+            return float(success)/len(results)
+        else:
+            return -1
+
+    def inspect_blog_parser_pair(self, blog, parser, max_posts, shuffle):
+        P = self.parser_registry[parser]()
+        results = P.parseBlog(blog, max_posts=max_posts, shuffle=shuffle, check_only=True)
+        return results
+
+    def inspect(self, parsers=None, log_results=False, log_summary=False,
+        shuffle=False, max_posts=20, 
+        break_exception=False, show_link_on_exception=False):
+        
+        if not parsers:
+            parsers = self.parser_registry.keys()
+
+        if log_results:
+            start_time = datetime.datetime.now()
+            
+            #Initialize the blog-by-parser csv
+            header = ['index'] + \
+                ['post_count'] + \
+                [f+"_xpath" for f in field_keys] + \
+                [f+"_cleaners" for f in field_keys] + \
+                ['pct_perfect'] + \
+                ['parser', 'blog', 'filepath', 'timestamp']
+            (bxp_filename, bxp_file_url, bxp_csv) = self.init_csv_writer(slug="ParserInspector-BxP-",header=header)
+
+        if log_summary:
+            #Initialize the blog csv
+            header = ['index'] + \
+                ["best_parser", "best_pct"] + \
+                ["post_count_"+p for p in parsers] + \
+                ["perfect_pct_"+p for p in parsers] + \
+                ['blog', 'filepath', 'timestamp']
+            (summary_filename, summary_file_url, summary_csv) = self.init_csv_writer(slug="ParserInspector-summary-",header=header)
+
+        for (i,blog) in enumerate(self.blog_list):
+            post_count = {}
+            perfect_pct = {}
+
+            for p in parsers:
+                results = self.inspect_blog_parser_pair(blog, p, max_posts, shuffle)
+                post_count[p] = len(results)
+                perfect_pct[p] = self.calc_percent_perfect(results)
+
+                if log_results:
+                    row = [i] + \
+                        [post_count[p]] + \
+                        [self.calc_xpath_success(results, f) for f in field_keys] + \
+                        [self.calc_cleaner_success(results, f) for f in field_keys] + \
+                        [perfect_pct[p] ] + \
+                        [
+                            p,
+                            blog.split('/')[-1],
+                            blog,
+                            datetime.date.strftime(datetime.datetime.now(), "%Y/%m/%d %H:%M:%S")
+                        ]
+                    bxp_csv.writerow( row )
+
+#                    print '\t'.join([str(r) for r in row])
+
+            if log_summary:
+                best_parser = max(perfect_pct, key=perfect_pct.get)
+                if perfect_pct[best_parser] <= 0:
+                    best_parser = "None"
+                    best_pct = -1
+                else:
+                    best_pct = perfect_pct[best_parser]
+                    
+                row = [i] + \
+                    [best_parser, best_pct] + \
+                    [post_count[p] for p in parsers] + \
+                    [perfect_pct[p] for p in parsers] + \
+                    [
+                        blog.split('/')[-1],
+                        blog,
+                        datetime.date.strftime(datetime.datetime.now(), "%Y/%m/%d %H:%M:%S")
+                    ]
+                summary_csv.writerow( row )
+                print '\t'.join([str(r) for r in row])
+
+        if log_results:
+            print 'Results file:\t', bxp_file_url
+
+        if log_summary:
+            print 'Summary file:\t', summary_file_url
+
+
+"""
     def test_parser_on_one_blog( parser, blog, break_on_mistake=False, max_posts=None ):
         posts = parser.mapPostFiles(blog)
         print len(posts), 'posts found'
@@ -221,7 +342,6 @@ class ParserInspector(Inspector):
             #Store to csv
             if summary_csv:
                 summary_csv.writerow( [ start_time, b, len(P) ] + [results[f][0] for f in field_keys] + [results[f][1] for f in field_keys] )
-
 """
 
 class FrontPageInspector(Inspector):

@@ -1,7 +1,7 @@
 import glob, csv, datetime, sys, inspect, random, os, argh
 from blogParser import parser_registry, field_keys
-from blogParser.utilities import firefox
-from blogInspector import MapperInspector
+#from blogParser.utilities import firefox
+from blogInspector import MapperInspector, ParserInspector
 
 input_path = '/scratch/unmirrored1/agong/blog_crawl_2012_01/mirrors/'
 output_path = 'nothing-here-yet!!'
@@ -17,46 +17,35 @@ def list_parsers(args):
 @argh.arg('--log-results', default=False, help='Log the results to csv?')
 def test_mappers(args):
     "Test mappers from one or more parsers on a list of blogs"
-
-    print args.parsers
     
     blogs = file(args.blog_file,'r').read()[:-1].split('\n')
     inspector = MapperInspector(blogs, parser_registry)
     inspector.inspect(args.parsers, args.log_results)
+
+#! The wrapper functions for various inspectors are reduntant.
+#  This could mostly be rewritten as a decorator
+#  Not worth the time right now.
+@argh.arg('--parsers', default=None, help='List of parsers', nargs='+')
+@argh.arg('--blog-file', default=default_blog_file, help='A file containing the list of blogs on separate rows')
+@argh.arg('--log-results', default=False, help='Log blog-by-parser results to csv?')
+@argh.arg('--log-summary', default=False, help='Log blog-level summary results to csv?')
+def test_parsers(args):
+    "Test one or more parsers on a list of blogs"
     
+    blogs = file(args.blog_file,'r').read()[:-1].split('\n')
+    inspector = ParserInspector(blogs, parser_registry)
+    inspector.inspect(args.parsers, log_results=args.log_results, log_summary=args.log_summary)
+
+
 
 
 ##### Main function ###########################################################
 
 def main(argv=None):
     p = argh.ArghParser()
-    p.add_commands([list_parsers, test_mappers])#,test-mappers])
+    p.add_commands([list_parsers, test_mappers, test_parsers])
     p.dispatch()
 
-"""
-#    blogs = file('data/um1-completed-blogs.txt','r').read()[:-1].split('\n')
-#    blogs = file('data/um1-blogspot-blogs.txt','r').read()[:-1].split('\n')
-#    blogs = file('data/um1-wordpress-blogs.txt','r').read()[:-1].split('\n')
-    blogs = file('data/blog-short-list.txt','r').read()[:-1].split('\n')
-#    print "\n".join(blogs[:5])
-
-    command = argv[1]
-    if command=='list-parsers':
-        list_parsers()
-
-    elif command=='test-all-mappers':
-        inspector = MapperInspector(blogs, parser_registry)
-        inspector.inspect(log_results=True)
-#        test_all_mappers(blogs)
-
-    else:
-        print 'Unknown command :', command
-#        print blogs[:5]
-#        for b in blogs:
-#            print count_blog_files(b), b
-
-    return 0
-"""
 """
     elif command=='test-mapper':
         test_mapper(blogs, argv[2])

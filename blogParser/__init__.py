@@ -26,27 +26,44 @@ class BlogParser(object):
     fields = {}         #xpath expressions that match key fields
     cleaners = {}       #functions to clean the results of xpath searches on fields
 
-    def parseBlog(self, filepath, verbose=False, max_posts=None, filename=None):
+    def parseBlog(self, filepath, max_posts=None, shuffle=False, filename=None, check_only=False, verbose=False ):
         if verbose: print 'Parsing blog at filepath', filepath
-        blog_xml = etree.Element( "blog" )
-
-        #self.setExpressions( url )
-        self.setBlogVariables( blog_xml, verbose )
-        
+                
         post_files = self.mapPostFiles(filepath, verbose)
-        if max_posts:
+        if shuffle:
             random.shuffle( post_files )
+        if max_posts:
             post_files = post_files[:max_posts]
+
+        if check_only:
+            results = {}
+        else:
+            blog_xml = etree.Element( "blog" )
+            #self.setExpressions( url )
+            self.setBlogVariables( blog_xml, verbose )
 
         for p in post_files:
             if verbose: print '\tParsing post in file', p
-            post_xml = self.parsePost( file(p, 'r').read(), verbose )
-            blog_xml.append( post_xml )
+
+            try:
+                result = self.parsePost( file(p, 'r').read(), verbose, check_only )
+                if check_only:
+                    results[p] = result
+                else:
+                    blog_xml.append( result )
+
+            #! This is a hack
+            except IOError:
+#                print 'IOError'
+                pass
             
         if filename:
             file(filename,'w').write( etree.tostring(blog_xml, pretty_print=True) )
-            
-        return blog_xml
+        
+        if check_only:
+            return results
+        else:
+            return blog_xml
 
     def mapPostFiles(self, filepath, verbose=False):
         if verbose: print '\tMapping post pages...'
