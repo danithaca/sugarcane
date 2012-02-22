@@ -57,24 +57,24 @@ class MapperInspector(Inspector):
         return count
 
     def inspect(self, parsers=None, log_results=False):
+        if not parsers:
+            parsers = self.parser_registry.keys()
+
         if log_results:
             start_time = datetime.datetime.now()
             (filename, file_url, C) = self.init_csv_writer(
                     slug='mapper-inspector',
                     header=['index', 'file_count'] +
-                        [p for p in self.parser_registry] +
+                        [p for p in parsers] +
                         ['blog', 'filepath', 'timestamp'],
                 )
-
-        if not parsers:
-            parsers = self.parser_registry.keys()
 
         for (i,blog) in enumerate(self.blog_list):
             results = {}
             for p in parsers:#self.parser_registry:
                 results[p] = self.inspect_blog_mapper_pair(blog, p)
 
-            row = [i, self.count_blog_files(blog)] + [results[p] for p in self.parser_registry] + \
+            row = [i, self.count_blog_files(blog)] + [results[p] for p in parsers] + \
                 [
                     blog.split('/')[-1],
                     blog,

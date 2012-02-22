@@ -5,33 +5,21 @@ from blogInspector import MapperInspector
 
 input_path = '/scratch/unmirrored1/agong/blog_crawl_2012_01/mirrors/'
 output_path = 'nothing-here-yet!!'
-
 default_blog_file = 'data/blog-short-list.txt'
 
-#@argh.command
 def list_parsers(args):
     "List registered parsers"
     for p in parser_registry:
         print '\t', p
 
-"""
-@argh.command
-def test_mappers(blog_file=default_blog_file,
-                 parsers=None,
-                 log_results=False):
-    "Test mappers from one or more parsers on a list of blogs"
-
-    blogs = file(blog_file,'r').read()[:-1].split('\n')
-    inspector = MapperInspector(blogs, parser_registry)
-    inspector.inspect(parsers, log_results)
-"""
-
-#! The parsers command-line parameter doesn't work yet.  Use the default or die.
-@argh.arg('--parsers', default=None, help='List of parsers')
-@argh.arg('--log-results', default=False, help='Log the results to csv?')
+@argh.arg('--parsers', default=None, help='List of parsers', nargs='+')
 @argh.arg('--blog-file', default=default_blog_file, help='A file containing the list of blogs on separate rows')
+@argh.arg('--log-results', default=False, help='Log the results to csv?')
 def test_mappers(args):
     "Test mappers from one or more parsers on a list of blogs"
+
+    print args.parsers
+    
     blogs = file(args.blog_file,'r').read()[:-1].split('\n')
     inspector = MapperInspector(blogs, parser_registry)
     inspector.inspect(args.parsers, args.log_results)
