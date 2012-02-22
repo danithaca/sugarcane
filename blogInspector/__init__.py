@@ -56,7 +56,7 @@ class MapperInspector(Inspector):
                 count += 1
         return count
 
-    def inspect(self, log_results=False):
+    def inspect(self, parsers=None, log_results=False):
         if log_results:
             start_time = datetime.datetime.now()
             (filename, file_url, C) = self.init_csv_writer(
@@ -66,9 +66,12 @@ class MapperInspector(Inspector):
                         ['blog', 'filepath', 'timestamp'],
                 )
 
+        if not parsers:
+            parsers = self.parser_registry.keys()
+
         for (i,blog) in enumerate(self.blog_list):
             results = {}
-            for p in self.parser_registry:
+            for p in parsers:#self.parser_registry:
                 results[p] = self.inspect_blog_mapper_pair(blog, p)
 
             row = [i, self.count_blog_files(blog)] + [results[p] for p in self.parser_registry] + \
@@ -97,14 +100,131 @@ class MapperInspector(Inspector):
             print 'Output:\t', file_url
             
             logger = file(log_file, 'ab')
-            logger.write(log_line)
+            logger.write('\n'+log_line)
 
 
-
+"""
 class ParserInspector(Inspector):
-    def inspect(self, shuffle=False, max_posts=20,
-        verbose=False, log_results=False, exceptions=None):
-        pass
 
+    def test_parser_on_one_blog( parser, blog, break_on_mistake=False, max_posts=None ):
+        posts = parser.mapPostFiles(blog)
+        print len(posts), 'posts found'
+        
+        if max_posts:
+            posts = posts[:max_posts]
+        
+        results = []
+        found_mistake = False
+        for p in posts:
+            print '='*80
+            print p
+            text = file(p,'r').read()
+            r = parser.parsePost(text, verbose=True, check_only=True)
+            results.append( r )
+
+            for k in r:
+                print '\t', k, ':'+' '*(14-len(k)), r[k][0], '\t', r[k][1]
+                if r[k][2]:
+                    print '\t\t', r[k][2][:80]
+
+                if not r[k][1] in [True, None]:
+                    found_mistake = True
+
+            if found_mistake and break_on_mistake:
+                print "Opening in Firefox..."
+                firefox(p)
+                return 0
+
+            print
+
+        #If all the posts parsed correctly, show the results, by field
+        for f in field_keys:
+            print '===', f, '========================================='
+            for r in results:
+                print r[f][2].__repr__()[:80]
+
+        print '='*80
+        
+        #Parse the whole blog and save as xml
+        xml = parser.parseBlog(blog, filename=log_path+"temp.xml", max_posts=max_posts)
+        print log_url+"temp.xml"
+    #    firefox(log_path+"temp.xml")
+
+        #Also convert and save as html
+        parser.convertToHtml(xml, filename=log_path+"temp.html")
+        print log_url+"temp.html"
+    #    firefox(log_path+"temp.html")
+        
+        return 1
+
+
+
+    #! This function is halfway there!
+    def inspect(self, shuffle=False, max_posts=20,
+        verbose=False, log_results=False, detailed_log=False, exceptions=None):
+        
+        if log_results:
+            very_start_time = datetime.datetime.now()
+            header = ['start_time', 'blog', 'post_count' ] +
+                [ f+"_fields" for f in field_keys] +
+                [ f+"_cleaners" for f in field_keys]
+
+            (filename, file_url, C) = self.init_csv_writer(
+                    slug='parser-inspector',
+                    header=header,
+                )
+        
+        if detailed_log:
+            pass
+#            header = ['blog', 'post_file' ]
+#            for f in field_keys:
+#                header +=  [ f+"_matchers", f+"_cleaners", f+"_result" ]
+#            detailed_csv.writerow( header )
+
+
+        for (i,blog) in enumerate(self.blog_list):
+            start_time = datetime.datetime.now()
+            P = parser.mapPostFiles(b)
+            
+            if verbose:
+                print b
+                print '\t', len(P), 'posts found'
+
+            if shuffle:
+                random.shuffle(P)
+            
+            #Set up an empty results object
+            results = {}
+            for f in field_keys: results[f] = [0,0]
+            
+            #Take up tothe first k posts of the blog
+            for p in P[:k]:
+                #Check fields against the parser
+                result = parser.parsePost(file(p,'r').read(), check_only=True)
+
+                #Store to csv
+                if detailed_csv:
+                    row = [b, p]
+                    for f in field_keys:
+                        row +=  [ result[f][0], result[f][1], result[f][2].__repr__()[:80] ]
+                    detailed_csv.writerow( row )
+                
+                #Compile results
+                for f in result:
+                    if result[f][0] == 1: results[f][0] += 1
+                    if result[f][1]: results[f][1] += 1
+
+            if verbose:
+                for f in results:
+                    print '\t', f, ' '*(14-len(f)), results[f]
+
+            #Store to csv
+            if summary_csv:
+                summary_csv.writerow( [ start_time, b, len(P) ] + [results[f][0] for f in field_keys] + [results[f][1] for f in field_keys] )
+
+"""
+
+class FrontPageInspector(Inspector):
+    pass    
 
 
