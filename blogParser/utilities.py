@@ -8,11 +8,11 @@ html_cleaner = Cleaner( style=True, scripts=True, comments=True, safe_attrs_only
 ##############functions ########################################################
 
 def generic_field_scraper(field_name, html_tree, xpath, cleaner):
-    if 1:
-        success = False
-        xpath_count = None
-        result_text = None
-        
+    success = False
+    xpath_count = None
+    result_text = None
+
+    try:
         xml = etree.Element( field_name )
         xpath_matches = html_tree.xpath(xpath)
 
@@ -22,17 +22,13 @@ def generic_field_scraper(field_name, html_tree, xpath, cleaner):
             result_text = cleaner(x)
             xml.text = result_text
             success = True
-            
-#        elif f in self.optional_fields:
-#            clean_success = True
 
-    """
     except Exception, err:
-        if verbose:
+#        if verbose:
             exc_type, exc_obj, exc_tb = sys.exc_info()
             fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]      
             print(exc_type, fname, exc_tb.tb_lineno)                
-
+    """
     except Exception as e:
         print type(e)
         print e.args

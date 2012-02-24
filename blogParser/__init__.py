@@ -85,28 +85,7 @@ class BlogParser(object):
         blog_xml.set( "parse_date", str(datetime.datetime.now()) )
 
     def parsePost(self, text, verbose=False):#, check_only=False):
-        """Parse a post and return an xml entry OR result triple
-        
-        Arguments:
-        text -- the text of the blog post
-        verbose -- turns on detailed reporting for parsing and error handling
-        check_only -- If this is true, parsePost returns an result triple instead of xml
-        
-        Returns:
-        An xml object containing one entry for each field in field_keys with a corresponding
-        
-            OR
-        
-        A result object containing a dictionary of tuples in this format
-            "field _name" : (   xpath_count -- int: the number of matches on the xpath query,
-                                clean_success -- boolean: whether the cleaner executed successfully,
-                                result_text -- text from a successful clean,
-                            )
-                            
-        NB: A successful parser will always return one of two things in each field:
-            (1, True, "some string...") -- A match on a unique field, OR
-            (0, True, None)             -- An optional field
-        """
+        """Parse a post and return a result dict and xml object"""
         
         post_xml = etree.Element( "post" )
         html_tree = html.fromstring(text)
@@ -120,12 +99,6 @@ class BlogParser(object):
             result[field_name] = r
 
         return (result, post_xml)
-        """
-        if check_only:
-            return result
-        else:
-            return x#post_xml
-        """
         
     def convertToHtml(self, blog_xml, filename=None):
         blog_html = etree.Element('html')
