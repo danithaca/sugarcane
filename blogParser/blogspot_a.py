@@ -16,6 +16,58 @@ class BlogspotParserA( BlogParser ):
         return re.findall( '\d+', x.text.strip() )[0]
         
     map_glob = '/[0-9]*/[0-9]*/*.html'
+    
+    field_scrapers = {
+        "title"   : {
+            'function' : utilities.generic_field_scraper,
+            'args' : {
+                'xpath' : "//h3[@class='post-title entry-title']",
+                'cleaner' : utilities.getNodeText,
+                }
+            },
+
+        "author"   : {
+            'function' : utilities.generic_field_scraper,
+            'args' : {
+                'xpath' : "//span[contains(@class,'post-author')]/span",
+                'cleaner' : utilities.stripAllTags,
+                }
+            },
+
+        "date"   : {
+            'function' : utilities.generic_field_scraper,
+            'args' : {
+                'xpath' : "//h2[@class='date-header']/span",
+                'cleaner' : utilities.getNodeText,
+                }
+            },
+
+        "content"   : {
+            'function' : utilities.generic_field_scraper,
+            'args' : {
+                'xpath' : "//div[contains(@class,'post-body')]",
+                'cleaner' : utilities.cleanAndTextify,
+                }
+            },
+
+        "labels"   : {
+            'function' : utilities.generic_field_scraper,
+            'args' : {
+                'xpath' : "//span[@class='post-labels']",
+                'cleaner' : extractLabels,
+                }
+            },
+
+        "comment-count"   : {
+            'function' : utilities.generic_field_scraper,
+            'args' : {
+                'xpath' : "//div[@id='comments']/h4",
+                'cleaner' : extractCommentCount,
+                }
+            },
+        }
+
+"""
 
     fields = {
         "title"   : "//h3[@class='post-title entry-title']",
@@ -38,4 +90,4 @@ class BlogspotParserA( BlogParser ):
         "labels"  : extractLabels,
         "comment-count" : extractCommentCount,
     }
-
+"""

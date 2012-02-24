@@ -1,4 +1,8 @@
-import datetime, glob, re, sys, os, random
+import datetime
+import glob
+import re
+import os
+import random
 from copy import deepcopy
 import lxml.etree as etree
 from lxml import html
@@ -156,9 +160,9 @@ class BlogParser(object):
 
 
 """Import the actual parsers..."""
-#from blogspot_a import *  
+from blogspot_a import *  
 from wordpress_a import *  
-#from wordpress_b import *  
+from wordpress_b import *
 #from typepad_a import *  
 #from newsvine_a import *  
 #from livejournal_a import *  

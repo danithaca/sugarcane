@@ -1,4 +1,10 @@
-import glob, re, subprocess, random
+import glob
+import re
+import subprocess
+import random
+import sys
+import os
+
 import lxml.etree as etree
 from lxml.html.clean import Cleaner
 

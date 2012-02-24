@@ -44,6 +44,57 @@ class WordpressParserB( BlogParser ):
 
     map_glob = '/[0-9][0-9][0-9][0-9]/[0-9][0-9]/[0-9][0-9]/*/index.html'
 
+    field_scrapers = {
+        "title"   : {
+            'function' : utilities.generic_field_scraper,
+            'args' : {
+                'xpath' : "//div[contains(@class,'post')]/h2",
+                'cleaner' : utilities.getNodeText,
+                }
+            },
+
+        "author"   : {
+            'function' : utilities.generic_field_scraper,
+            'args' : {
+                'xpath' : "",
+                'cleaner' : utilities.stripAllTags,
+                }
+            },
+
+        "date"   : {
+            'function' : utilities.generic_field_scraper,
+            'args' : {
+                'xpath' : "//meta[@property='og:url']",
+                'cleaner' : getDateFromUrl,
+                }
+            },
+
+        "content"   : {
+            'function' : utilities.generic_field_scraper,
+            'args' : {
+                'xpath' : "//div[@class='entry']",
+                'cleaner' : cleanAndTextify,
+                }
+            },
+
+        "labels"   : {
+            'function' : utilities.generic_field_scraper,
+            'args' : {
+                'xpath' : "//p[@class='clear']",
+                'cleaner' : getLabelsFromEntryUtility,
+                }
+            },
+
+        "comment-count"   : {
+            'function' : utilities.generic_field_scraper,
+            'args' : {
+                'xpath' : "",
+                'cleaner' : extractCommentCount,
+                }
+            },
+        }
+
+"""
     optional_fields = ['labels']
     
     fields = {
@@ -64,3 +115,4 @@ class WordpressParserB( BlogParser ):
 #        "comment-count" : extractCommentCount,
     }
 
+"""
