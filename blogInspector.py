@@ -28,11 +28,14 @@ class Inspector(object):
 
     def init_csv_writer(self, slug=None, log_path=log_path, header=None):
         if not slug:
-            slug = self.__class__.__name__+'-'
-        G = glob.glob(log_path+slug+'*.csv')
+            slug = self.__class__.__name__
 
-        filename = log_path+slug+str(len(G)+1)+'.csv'
-        file_url = log_url+slug+str(len(G)+1)+'.csv'
+#        G = glob.glob(log_path+slug+'*.csv')
+#        filename = log_path+slug+str(len(G)+1)+'.csv'
+#        file_url = log_url+slug+str(len(G)+1)+'.csv'
+
+        filename = log_path+slug+'.csv'
+        file_url = log_url+slug+'.csv'
 
         C = csv.writer(file(filename, 'w'))
         if header:
