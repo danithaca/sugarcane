@@ -12,6 +12,10 @@ log_file = log_path+'inspector_logs.txt'
 
 blog_file_url = "http://www.cscs.umich.edu/~agong/um1-blog-crawl/"+"mirrors/"
 
+#! Hardcoded for now.
+required_fields = ['content']#['title', 'date', 'content']
+
+
 class Inspector(object):
     def __init__(self, blog_list=None):
         if blog_list:
@@ -115,10 +119,7 @@ class ParserInspector(Inspector):
         else:
             return -1
 
-    def calc_percent_acceptable(self, results):
-        #! Hardcoded for now.
-        required_fields = ['content']#['title', 'date', 'content']
-    
+    def calc_percent_acceptable(self, results):    
         success = 0
         for post in results:
             good = True
@@ -160,7 +161,7 @@ class ParserInspector(Inspector):
             #Initialize the blog csv
             header = ['index'] + \
                 ["best_parser", "best_pct"] + \
-                ["post_count_"+p for p in parsers] + \
+                [p+"_post_count" for p in parsers] + \
                 [p+"_pct_perfect" for p in parsers] + \
                 [p+"_pct_acceptable" for p in parsers] + \
                 ['blog', 'filepath', 'timestamp']
@@ -268,7 +269,7 @@ class SoloBlogInspector(Inspector):
             for f in r:
                 print '\t', f, ':'+' '*(14-len(f)), r[f]["success"], '\t', r[f]["message"]
 
-                if not r[f]["success"]:
+                if f in required_fields and not r[f]["success"]:
                     found_mistake = True
 
             if found_mistake and break_on_mistake:

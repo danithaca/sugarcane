@@ -179,6 +179,7 @@ class BlogParser(object):
 from blogspot_a import *  
 from wordpress_a import *  
 from wordpress_b import *
+from wordpress_c import *
 #from typepad_a import *  
 #from newsvine_a import *  
 #from livejournal_a import *  
