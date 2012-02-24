@@ -141,9 +141,7 @@ class ParserInspector(Inspector):
         return results
 
     def inspect(self, parsers=None, log_results=False, log_summary=False,
-        shuffle=False, max_posts=20, 
-        break_exception=False, show_link_on_exception=False):\
-        #! These last two params need to be dropped
+        shuffle=False, max_posts=20):
         
         if not parsers:
             parsers = parser_registry.keys()
