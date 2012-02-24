@@ -67,7 +67,7 @@ class MapperInspector(Inspector):
         if log_results:
             start_time = datetime.datetime.now()
             (filename, file_url, C) = self.init_csv_writer(
-                    slug='mapper-inspector',
+#                    slug='mapper-inspector',
                     header=['index', 'file_count'] +
                         [p for p in parsers] +
                         ['blog', 'filepath', 'timestamp'],
@@ -111,7 +111,7 @@ class ParserInspector(Inspector):
     def calc_xpath_success(self, results, field):
         success = 0
         for post in results:
-            print results[post][field][0:2]
+#            print results[post][field][0:2]
             if results[post][field][0] == 1:
                 success += 1 
         return success
@@ -148,7 +148,8 @@ class ParserInspector(Inspector):
 
     def inspect(self, parsers=None, log_results=False, log_summary=False,
         shuffle=False, max_posts=20, 
-        break_exception=False, show_link_on_exception=False):
+        break_exception=False, show_link_on_exception=False):\
+        #! These last two params need to be dropped
         
         if not parsers:
             parsers = self.parser_registry.keys()
@@ -226,8 +227,15 @@ class ParserInspector(Inspector):
             print 'Summary file:\t', summary_file_url
 
 
-"""
-    def test_parser_on_one_blog( parser, blog, break_on_mistake=False, max_posts=None ):
+class SoloBlogInspector(Inspector):
+
+    def inspect(self, parser_name, log_results=False,
+        shuffle=False, max_posts=20,
+        break_on_mistake=False, show_link_on_mistake=False):
+
+        parser = self.parser_registry[parser_name]()
+        blog = self.blog_list[0]
+
         posts = parser.mapPostFiles(blog)
         print len(posts), 'posts found'
         
@@ -279,7 +287,7 @@ class ParserInspector(Inspector):
         return 1
 
 
-
+"""
     #! This function is halfway there!
     def inspect(self, shuffle=False, max_posts=20,
         verbose=False, log_results=False, detailed_log=False, exceptions=None):
@@ -343,6 +351,8 @@ class ParserInspector(Inspector):
             if summary_csv:
                 summary_csv.writerow( [ start_time, b, len(P) ] + [results[f][0] for f in field_keys] + [results[f][1] for f in field_keys] )
 """
+
+
 
 class FrontPageInspector(Inspector):
     pass    

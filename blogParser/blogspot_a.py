@@ -20,9 +20,11 @@ class BlogspotParserA( BlogParser ):
     fields = {
         "title"   : "//h3[@class='post-title entry-title']",
 #        "author"  : "//span[@class='post-author vcard']/span/a",
-        "author"  : "//span[@class='post-author vcard']/span",
+#        "author"  : "//span[@class='post-author vcard']/span",
+        "author"  : "//span[contains(@class,'post-author')]/span",
         "date"    : "//h2[@class='date-header']/span",
-        "content" : "//div[@class='post-body entry-content']",
+#        "content" : "//div[@class='post-body entry-content']",
+        "content" : "//div[contains(@class,'post-body')]",
         "labels"  : "//span[@class='post-labels']",
         "comment-count" : "//div[@id='comments']/h4",
     }
