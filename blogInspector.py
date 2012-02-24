@@ -103,6 +103,7 @@ class MapperInspector(Inspector):
 
 
 class ParserInspector(Inspector):
+    """
     def calc_xpath_success(self, results, field):
         success = 0
         for post in results:
@@ -135,6 +136,29 @@ class ParserInspector(Inspector):
             return float(success)/len(results)
         else:
             return -1
+    """
+    def calc_success_rate(self, results, field):
+        success = 0
+        for post in results:
+            if results[post][field]["success"]:
+                success += 1 
+        return success
+
+    def calc_percent_perfect(self, results):
+        success = 0
+        for post in results:
+            good = True
+            for f in field_keys:
+                if not results[post][f]["success"]:
+                    good = False
+
+            if good:
+                success += 1
+
+        if len(results) > 0:
+            return float(success)/len(results)
+        else:
+            return -1
 
     def inspect_blog_parser_pair(self, blog, parser, max_posts, shuffle):
         P = parser_registry[parser]()
@@ -153,8 +177,7 @@ class ParserInspector(Inspector):
             #Initialize the blog-by-parser csv
             header = ['index'] + \
                 ['post_count'] + \
-                [f+"_xpath" for f in field_keys] + \
-                [f+"_cleaners" for f in field_keys] + \
+                [f for f in field_keys] + \
                 ['pct_perfect'] + \
                 ['parser', 'blog', 'filepath', 'timestamp']
             (bxp_filename, bxp_file_url, bxp_csv) = self.init_csv_writer(slug="ParserInspector-BxP-",header=header)
@@ -180,8 +203,7 @@ class ParserInspector(Inspector):
                 if log_results:
                     row = [i] + \
                         [post_count[p]] + \
-                        [self.calc_xpath_success(results, f) for f in field_keys] + \
-                        [self.calc_cleaner_success(results, f) for f in field_keys] + \
+                        [self.calc_success_rate(results, f) for f in field_keys] + \
                         [perfect_pct[p] ] + \
                         [
                             p,
@@ -234,7 +256,6 @@ class SoloBlogInspector(Inspector):
         break_on_mistake=True):
 
         parser = parser_registry[parser_name]()
-        #! A bit hacky here: SoloBlogInspector uses a "list" of one blog
         blog = self.blog_path+self.blog_url    
 
         posts = parser.mapPostFiles(blog)
