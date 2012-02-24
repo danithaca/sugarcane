@@ -4,7 +4,7 @@ import datetime
 import glob
 import csv
 from copy import deepcopy
-from blogParser import field_keys
+from blogParser import field_keys, parser_registry
 
 log_path = '/users/agong/Desktop/blog-crawl-results/'
 log_url = "http://www.cscs.umich.edu/~agong/blog-crawl-results/"
@@ -12,15 +12,9 @@ log_url = "http://www.cscs.umich.edu/~agong/blog-crawl-results/"
 log_file = log_path+'inspector_logs.txt'
 
 class Inspector(object):
-    def __init__(self, blog_list=None, parser_registry=None):
+    def __init__(self, blog_list=None):
         if blog_list:
             self.set_blog_list(blog_list)
-
-        if parser_registry:
-            self.set_parser_registry(parser_registry)
-
-    def set_parser_registry(self, parser_registry):
-        self.parser_registry = deepcopy(parser_registry)
 
     def set_blog_list(self, blog_list, shuffle=False, max_blogs=None):
         self.blog_list = deepcopy( blog_list )
@@ -49,7 +43,7 @@ class Inspector(object):
 
 class MapperInspector(Inspector):
     def inspect_blog_mapper_pair(self, blog, parser):
-        P = self.parser_registry[parser]()
+        P = parser_registry[parser]()
         posts = P.mapPostFiles(blog)
         return len(posts)
         
@@ -62,7 +56,7 @@ class MapperInspector(Inspector):
 
     def inspect(self, parsers=None, log_results=False):
         if not parsers:
-            parsers = self.parser_registry.keys()
+            parsers = parser_registry.keys()
 
         if log_results:
             start_time = datetime.datetime.now()
@@ -75,7 +69,7 @@ class MapperInspector(Inspector):
 
         for (i,blog) in enumerate(self.blog_list):
             results = {}
-            for p in parsers:#self.parser_registry:
+            for p in parsers:
                 results[p] = self.inspect_blog_mapper_pair(blog, p)
 
             row = [i, self.count_blog_files(blog)] + [results[p] for p in parsers] + \
@@ -142,7 +136,7 @@ class ParserInspector(Inspector):
             return -1
 
     def inspect_blog_parser_pair(self, blog, parser, max_posts, shuffle):
-        P = self.parser_registry[parser]()
+        P = parser_registry[parser]()
         results = P.parseBlog(blog, max_posts=max_posts, shuffle=shuffle, check_only=True)
         return results
 
@@ -152,7 +146,7 @@ class ParserInspector(Inspector):
         #! These last two params need to be dropped
         
         if not parsers:
-            parsers = self.parser_registry.keys()
+            parsers = parser_registry.keys()
 
         if log_results:
             start_time = datetime.datetime.now()
@@ -233,7 +227,7 @@ class SoloBlogInspector(Inspector):
         shuffle=False, max_posts=20,
         break_on_mistake=False, show_link_on_mistake=False):
 
-        parser = self.parser_registry[parser_name]()
+        parser = parser_registry[parser_name]()
         blog = self.blog_list[0]
 
         posts = parser.mapPostFiles(blog)

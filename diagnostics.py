@@ -1,5 +1,5 @@
 import glob, csv, datetime, sys, inspect, random, os, argh
-from blogParser import parser_registry, field_keys
+from blogParser import parser_registry
 #from blogParser.utilities import firefox
 from blogInspector import MapperInspector, ParserInspector, SoloBlogInspector
 
@@ -21,7 +21,7 @@ def test_mappers(args):
     "Test mappers from one or more parsers on a list of blogs"
     
     blogs = file(args.blog_file,'r').read()[:-1].split('\n')
-    inspector = MapperInspector(blogs, parser_registry)
+    inspector = MapperInspector(blogs)
     inspector.inspect(args.parsers, args.log_results)
 
 
@@ -36,7 +36,7 @@ def test_parsers(args):
     "Test one or more parsers on a list of blogs"
     
     blogs = file(args.blog_file,'r').read()[:-1].split('\n')
-    inspector = ParserInspector(blogs, parser_registry)
+    inspector = ParserInspector(blogs)
     inspector.inspect(args.parsers, log_results=args.log_results, log_summary=args.log_summary)
 
 
@@ -48,7 +48,7 @@ def test_blog(args):
     "Test one or more parsers on a single blog"
     print args
     blogs = [args.input_path+args.blog]
-    inspector = SoloBlogInspector(blogs, parser_registry)
+    inspector = SoloBlogInspector(blogs)
     inspector.inspect(args.parser, log_results=args.log_results )
 
 
