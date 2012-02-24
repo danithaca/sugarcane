@@ -256,19 +256,14 @@ class SoloBlogInspector(Inspector):
             (r, x) = parser.parsePost(text, verbose=True)
             results.append( r )
 
-#            print r["success"]
             for f in r:
-#                print r[f]
                 print '\t', f, ':'+' '*(14-len(f)), r[f]["success"], '\t', r[f]["message"]
-#                if r[k][2]:
-#                    print '\t\t', r[k][2][:80]
 
                 if not r[f]["success"]:
                     found_mistake = True
 
             if found_mistake and break_on_mistake:
                 print "Found mistake.  Exiting..."
-#                firefox(p)
                 return 0
 
             print
