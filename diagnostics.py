@@ -46,10 +46,8 @@ def test_parsers(args):
 @argh.arg('--log-results', default=False, help='Log post-level results to csv?')
 def test_blog(args):
     "Test one or more parsers on a single blog"
-    print args
-    blogs = [args.input_path+args.blog]
-    inspector = SoloBlogInspector(blogs)
-    inspector.inspect(args.parser, log_results=args.log_results )
+    inspector = SoloBlogInspector(args.input_path, args.blog)
+    inspector.inspect(args.parser, log_results=args.log_results)
 
 
 

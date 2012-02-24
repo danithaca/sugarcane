@@ -26,6 +26,7 @@ class WordpressParserA( BlogParser ):
         "date"    : "//span[@class='entry-date']",
         "content" : "//div[@class='entry-content']",
         "labels"  : "//div[@class='entry-utility']",
+#        "labels"  : "//div[@class='entry-info']",
         "comment-count" : "//div[@id='comments']",
     }
 

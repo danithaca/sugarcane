@@ -8,8 +8,9 @@ from blogParser import field_keys, parser_registry
 
 log_path = '/users/agong/Desktop/blog-crawl-results/'
 log_url = "http://www.cscs.umich.edu/~agong/blog-crawl-results/"
-
 log_file = log_path+'inspector_logs.txt'
+
+blog_file_url = "http://www.cscs.umich.edu/~agong/um1-blog-crawl/"+"mirrors/"
 
 class Inspector(object):
     def __init__(self, blog_list=None):
@@ -221,15 +222,26 @@ class ParserInspector(Inspector):
 
 class SoloBlogInspector(Inspector):
 
+    def __init__(self, blog_path, blog_url):
+        self.blog_path = blog_path
+        self.blog_url = blog_url
+
+#        #! A bit hacky here: SoloBlogInspector uses a "list" of one blog
+#        self.set_blog_list([blog_path+blog_url])
+
     def inspect(self, parser_name, log_results=False,
         shuffle=False, max_posts=20,
-        break_on_mistake=False, show_link_on_mistake=False):
+        break_on_mistake=True):
 
         parser = parser_registry[parser_name]()
-        blog = self.blog_list[0]
+        #! A bit hacky here: SoloBlogInspector uses a "list" of one blog
+        blog = self.blog_path+self.blog_url    
 
         posts = parser.mapPostFiles(blog)
         print len(posts), 'posts found'
+        
+        if shuffle:
+            random.shuffle(posts)
         
         if max_posts:
             posts = posts[:max_posts]
@@ -239,6 +251,7 @@ class SoloBlogInspector(Inspector):
         for p in posts:
             print '='*80
             print p
+            print blog_file_url + self.blog_url + p.split(self.blog_url)[1]
             text = file(p,'r').read()
             r = parser.parsePost(text, verbose=True, check_only=True)
             results.append( r )
@@ -253,7 +266,7 @@ class SoloBlogInspector(Inspector):
 
             if found_mistake and break_on_mistake:
                 print "Opening in Firefox..."
-                firefox(p)
+#                firefox(p)
                 return 0
 
             print
