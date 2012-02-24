@@ -89,40 +89,6 @@ class MapperInspector(Inspector):
 
 
 class ParserInspector(Inspector):
-    """
-    def calc_xpath_success(self, results, field):
-        success = 0
-        for post in results:
-#            print results[post][field][0:2]
-            if results[post][field][0] == 1:
-                success += 1 
-        return success
-
-    def calc_cleaner_success(self, results, field):
-        success = 0
-        for post in results:
-            if results[post][field][1]:
-                success += 1 
-        return success
-
-    def calc_percent_perfect(self, results):
-        success = 0
-        for post in results:
-            good = True
-            for f in field_keys:
-                if not results[post][f][0] == 1:
-                    good = False
-                if not results[post][f][1] == True:
-                    good = False
-
-            if good:
-                success += 1
-
-        if len(results) > 0:
-            return float(success)/len(results)
-        else:
-            return -1
-    """
     def calc_success_rate(self, results, field):
         success = 0
         for post in results:
@@ -234,9 +200,6 @@ class SoloBlogInspector(Inspector):
         self.blog_path = blog_path
         self.blog_url = blog_url
 
-#        #! A bit hacky here: SoloBlogInspector uses a "list" of one blog
-#        self.set_blog_list([blog_path+blog_url])
-
     def inspect(self, parser_name, log_results=False,
         shuffle=False, max_posts=20,
         break_on_mistake=True):
@@ -286,81 +249,12 @@ class SoloBlogInspector(Inspector):
         #Parse the whole blog and save as xml
         xml = parser.parseBlog(blog, filename=log_path+"temp.xml", max_posts=max_posts)
         print log_url+"temp.xml"
-    #    firefox(log_path+"temp.xml")
 
         #Also convert and save as html
         parser.convertToHtml(xml, filename=log_path+"temp.html")
         print log_url+"temp.html"
-    #    firefox(log_path+"temp.html")
         
         return 1
-
-
-"""
-    #! This function is halfway there!
-    def inspect(self, shuffle=False, max_posts=20,
-        verbose=False, log_results=False, detailed_log=False, exceptions=None):
-        
-        if log_results:
-            very_start_time = datetime.datetime.now()
-            header = ['start_time', 'blog', 'post_count' ] +
-                [ f+"_fields" for f in field_keys] +
-                [ f+"_cleaners" for f in field_keys]
-
-            (filename, file_url, C) = self.init_csv_writer(
-                    slug='parser-inspector',
-                    header=header,
-                )
-        
-        if detailed_log:
-            pass
-#            header = ['blog', 'post_file' ]
-#            for f in field_keys:
-#                header +=  [ f+"_matchers", f+"_cleaners", f+"_result" ]
-#            detailed_csv.writerow( header )
-
-
-        for (i,blog) in enumerate(self.blog_list):
-            start_time = datetime.datetime.now()
-            P = parser.mapPostFiles(b)
-            
-            if verbose:
-                print b
-                print '\t', len(P), 'posts found'
-
-            if shuffle:
-                random.shuffle(P)
-            
-            #Set up an empty results object
-            results = {}
-            for f in field_keys: results[f] = [0,0]
-            
-            #Take up tothe first k posts of the blog
-            for p in P[:k]:
-                #Check fields against the parser
-                result = parser.parsePost(file(p,'r').read(), check_only=True)
-
-                #Store to csv
-                if detailed_csv:
-                    row = [b, p]
-                    for f in field_keys:
-                        row +=  [ result[f][0], result[f][1], result[f][2].__repr__()[:80] ]
-                    detailed_csv.writerow( row )
-                
-                #Compile results
-                for f in result:
-                    if result[f][0] == 1: results[f][0] += 1
-                    if result[f][1]: results[f][1] += 1
-
-            if verbose:
-                for f in results:
-                    print '\t', f, ' '*(14-len(f)), results[f]
-
-            #Store to csv
-            if summary_csv:
-                summary_csv.writerow( [ start_time, b, len(P) ] + [results[f][0] for f in field_keys] + [results[f][1] for f in field_keys] )
-"""
-
 
 
 class FrontPageInspector(Inspector):
