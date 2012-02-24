@@ -47,9 +47,9 @@ def generic_field_scraper(field_name, html_tree, xpath, cleaner):
     result = {
         'success' : success,
         'message' : None,
+        'contents' : result_text,
         'details' : {
             'xpath_count' : xpath_count,
-            'contents' : result_text,
             }
         }
 
@@ -60,6 +60,7 @@ def empty_field_scraper(field_name, html_tree):
     result = {
         'success' : False,
         'message' : "Field scraper not declared",
+        'contents' : None,
         }
 
     return (result, etree.Element( field_name ))

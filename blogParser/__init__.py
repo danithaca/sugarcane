@@ -3,6 +3,7 @@ import glob
 import re
 import os
 import random
+
 from copy import deepcopy
 import lxml.etree as etree
 from lxml import html
@@ -16,7 +17,8 @@ def profiledParser( parser ):
     return parser
 
 
-xml_parser = etree.XMLParser(remove_blank_text=True)
+xml_parser = etree.XMLParser(remove_blank_text=False)
+#html_parser = etree.HTMLParser(remove_blank_text=True)
 
 field_keys = ["title","author","date","content","labels","comment-count"]
 
@@ -100,6 +102,7 @@ class BlogParser(object):
                 field_name,
                 html_tree,
                 **self.field_scrapers[field_name]["args"])
+            post_xml.append(x)
             result[field_name] = r
 
         return (result, post_xml)
@@ -148,6 +151,19 @@ class BlogParser(object):
         S = post_xml.xpath('content')
         s = S[0].text
         f = etree.fromstring(s, xml_parser)
+
+        #Remove empty paragraphs        
+        for p in f.xpath("p"):
+            t = p.text
+            if not (t and t.strip()):
+                p.getparent().remove(p)
+
+        #remove empty divs
+        for p in f.xpath("div"):
+            t = p.text
+            if not (t and t.strip()):
+                p.getparent().remove(p)
+                
         if f is None:
             doc_content.text = "&nbsp;"
         else:

@@ -163,6 +163,8 @@ class ParserInspector(Inspector):
                 ['blog', 'filepath', 'timestamp']
             (summary_filename, summary_file_url, summary_csv) = self.init_csv_writer(slug="ParserInspector-summary-",header=header)
 
+        acceptable_matches = 0
+
         for (i,blog) in enumerate(self.blog_list):
             post_count = {}
             perfect_pct = {}
@@ -177,9 +179,9 @@ class ParserInspector(Inspector):
                 if log_results:
                     row = [i] + \
                         [post_count[p]] + \
-                        [self.calc_success_rate(results, f) for f in field_keys] + \
                         [perfect_pct[p] ] + \
                         [acceptable_pct[p] ] + \
+                        [self.calc_success_rate(results, f) for f in field_keys] + \
                         [
                             p,
                             blog.split('/')[-1],
@@ -198,6 +200,9 @@ class ParserInspector(Inspector):
                 else:
                     best_pct = acceptable_pct[best_parser]
                     
+                    if best_pct == 1:
+                        acceptable_matches += 1
+                    
                 row = [i] + \
                     [best_parser, best_pct] + \
                     [post_count[p] for p in parsers] + \
@@ -211,11 +216,18 @@ class ParserInspector(Inspector):
                 summary_csv.writerow( row )
                 print '\t'.join([str(r) for r in row])
 
+        print '='*80
+        print acceptable_matches, 'acceptable matches'
+        print len(self.blog_list), 'total blogs checked'
+        print float(acceptable_matches)/len(self.blog_list), 'percent success'
+        print 
+        
         if log_results:
             print 'Results file:\t', bxp_file_url
 
         if log_summary:
             print 'Summary file:\t', summary_file_url
+
 
 
 class SoloBlogInspector(Inspector):
@@ -266,12 +278,12 @@ class SoloBlogInspector(Inspector):
         for f in field_keys:
             print '===', f, '========================================='
             for r in results:
-                print r[f][2].__repr__()[:80]
+                print r[f]["contents"].__repr__()[:80]
 
         print '='*80
         
         #Parse the whole blog and save as xml
-        xml = parser.parseBlog(blog, filename=log_path+"temp.xml", max_posts=max_posts)
+        (result, xml) = parser.parseBlog(blog, filename=log_path+"temp.xml", max_posts=max_posts)
         print log_url+"temp.xml"
 
         #Also convert and save as html

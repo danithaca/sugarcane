@@ -21,15 +21,15 @@ class BlogspotParserA( BlogParser ):
         "title"   : {
             'function' : utilities.generic_field_scraper,
             'args' : {
-                'xpath' : "//h3[@class='post-title entry-title']",
-                'cleaner' : utilities.getNodeText,
+                'xpath' : "//h3[contains(@class,'post-title')]",
+                'cleaner' : utilities.stripAllTags,#utilities.getNodeText,
                 }
             },
 
         "author"   : {
             'function' : utilities.generic_field_scraper,
             'args' : {
-                'xpath' : "//span[contains(@class,'post-author')]/span",
+                'xpath' : "//span[contains(@class,'post-author')]",#/span",
                 'cleaner' : utilities.stripAllTags,
                 }
             },
