@@ -54,11 +54,8 @@ class WordpressParserB( BlogParser ):
             },
 
         "author"   : {
-            'function' : utilities.generic_field_scraper,
-            'args' : {
-                'xpath' : "",
-                'cleaner' : utilities.stripAllTags,
-                }
+            'function' : utilities.empty_field_scraper,
+            'args' : {}
             },
 
         "date"   : {
@@ -86,14 +83,10 @@ class WordpressParserB( BlogParser ):
             },
 
         "comment-count"   : {
-            'function' : utilities.generic_field_scraper,
-            'args' : {
-                'xpath' : "",
-                'cleaner' : extractCommentCount,
-                }
-            },
+            'function' : utilities.empty_field_scraper,
+            'args' : {}
+            }
         }
-
 """
     optional_fields = ['labels']
     

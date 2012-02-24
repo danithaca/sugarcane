@@ -112,6 +112,25 @@ class ParserInspector(Inspector):
         else:
             return -1
 
+    def calc_percent_acceptable(self, results):
+        #! Hardcoded for now.
+        required_fields = ['title', 'date', 'content']
+    
+        success = 0
+        for post in results:
+            good = True
+            for f in required_fields:
+                if not results[post][f]["success"]:
+                    good = False
+
+            if good:
+                success += 1
+
+        if len(results) > 0:
+            return float(success)/len(results)
+        else:
+            return -1
+
     def inspect_blog_parser_pair(self, blog, parser, max_posts, shuffle):
         P = parser_registry[parser]()
         (results, xml) = P.parseBlog(blog, max_posts=max_posts, shuffle=shuffle)
@@ -129,8 +148,8 @@ class ParserInspector(Inspector):
             #Initialize the blog-by-parser csv
             header = ['index'] + \
                 ['post_count'] + \
+                ['pct_perfect', 'pct_acceptable'] + \
                 [f for f in field_keys] + \
-                ['pct_perfect'] + \
                 ['parser', 'blog', 'filepath', 'timestamp']
             (bxp_filename, bxp_file_url, bxp_csv) = self.init_csv_writer(slug="ParserInspector-BxP-",header=header)
 
@@ -139,24 +158,28 @@ class ParserInspector(Inspector):
             header = ['index'] + \
                 ["best_parser", "best_pct"] + \
                 ["post_count_"+p for p in parsers] + \
-                ["perfect_pct_"+p for p in parsers] + \
+                [p+"_pct_perfect" for p in parsers] + \
+                [p+"_pct_acceptable" for p in parsers] + \
                 ['blog', 'filepath', 'timestamp']
             (summary_filename, summary_file_url, summary_csv) = self.init_csv_writer(slug="ParserInspector-summary-",header=header)
 
         for (i,blog) in enumerate(self.blog_list):
             post_count = {}
             perfect_pct = {}
+            acceptable_pct = {}
 
             for p in parsers:
                 results = self.inspect_blog_parser_pair(blog, p, max_posts, shuffle)
                 post_count[p] = len(results)
                 perfect_pct[p] = self.calc_percent_perfect(results)
+                acceptable_pct[p] = self.calc_percent_acceptable(results)
 
                 if log_results:
                     row = [i] + \
                         [post_count[p]] + \
                         [self.calc_success_rate(results, f) for f in field_keys] + \
                         [perfect_pct[p] ] + \
+                        [acceptable_pct[p] ] + \
                         [
                             p,
                             blog.split('/')[-1],
@@ -168,17 +191,18 @@ class ParserInspector(Inspector):
 #                    print '\t'.join([str(r) for r in row])
 
             if log_summary:
-                best_parser = max(perfect_pct, key=perfect_pct.get)
-                if perfect_pct[best_parser] <= 0:
+                best_parser = max(acceptable_pct, key=acceptable_pct.get)
+                if acceptable_pct[best_parser] <= 0:
                     best_parser = "None"
                     best_pct = -1
                 else:
-                    best_pct = perfect_pct[best_parser]
+                    best_pct = acceptable_pct[best_parser]
                     
                 row = [i] + \
                     [best_parser, best_pct] + \
                     [post_count[p] for p in parsers] + \
                     [perfect_pct[p] for p in parsers] + \
+                    [acceptable_pct[p] for p in parsers] + \
                     [
                         blog.split('/')[-1],
                         blog,

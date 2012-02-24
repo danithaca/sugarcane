@@ -11,7 +11,7 @@ from lxml.html.clean import Cleaner
 html_parser = etree.HTMLParser(remove_blank_text=True)
 html_cleaner = Cleaner( style=True, scripts=True, comments=True, safe_attrs_only=True )
 
-##############functions ########################################################
+### Field scraper functions ####################################################
 
 def generic_field_scraper(field_name, html_tree, xpath, cleaner):
     success = False
@@ -54,6 +54,16 @@ def generic_field_scraper(field_name, html_tree, xpath, cleaner):
         }
 
     return (result, xml)
+
+
+def empty_field_scraper(field_name, html_tree):
+    result = {
+        'success' : False,
+        'message' : "Field scraper not declared",
+        }
+
+    return (result, etree.Element( field_name ))
+
 
 ### "Cleaner" functions ########################################################
 # Input: an etree xml node
