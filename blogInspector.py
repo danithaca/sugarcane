@@ -117,7 +117,7 @@ class ParserInspector(Inspector):
 
     def calc_percent_acceptable(self, results):
         #! Hardcoded for now.
-        required_fields = ['title', 'date', 'content']
+        required_fields = ['content']#['title', 'date', 'content']
     
         success = 0
         for post in results:
@@ -154,7 +154,7 @@ class ParserInspector(Inspector):
                 ['pct_perfect', 'pct_acceptable'] + \
                 [f for f in field_keys] + \
                 ['parser', 'blog', 'filepath', 'timestamp']
-            (bxp_filename, bxp_file_url, bxp_csv) = self.init_csv_writer(slug="ParserInspector-BxP-",header=header)
+            (bxp_filename, bxp_file_url, bxp_csv) = self.init_csv_writer(slug="ParserInspector-BxP",header=header)
 
         if log_summary:
             #Initialize the blog csv
@@ -164,7 +164,7 @@ class ParserInspector(Inspector):
                 [p+"_pct_perfect" for p in parsers] + \
                 [p+"_pct_acceptable" for p in parsers] + \
                 ['blog', 'filepath', 'timestamp']
-            (summary_filename, summary_file_url, summary_csv) = self.init_csv_writer(slug="ParserInspector-summary-",header=header)
+            (summary_filename, summary_file_url, summary_csv) = self.init_csv_writer(slug="ParserInspector-summary",header=header)
 
         acceptable_matches = 0
 
