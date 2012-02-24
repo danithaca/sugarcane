@@ -84,22 +84,8 @@ class MapperInspector(Inspector):
             if log_results:
                 C.writerow( row )
 
-        #! This is clunky.  Why make it optional?
         if log_results:
-            log_line = "\t".join([
-                self.__class__.__name__,
-                datetime.date.strftime(start_time, "%Y/%m/%d %H:%M:%S"),
-                datetime.date.strftime(datetime.datetime.now(), "%Y/%m/%d %H:%M:%S"),
-                filename,
-                str(len(self.blog_list)),
-            ])
-
-            print '='*80
-            print 'Logged:\t', log_line
             print 'Output:\t', file_url
-            
-            logger = file(log_file, 'ab')
-            logger.write('\n'+log_line)
 
 
 class ParserInspector(Inspector):
