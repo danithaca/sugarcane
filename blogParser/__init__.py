@@ -22,11 +22,13 @@ class BlogParser(object):
     map_include = None  #A regex string for filenames to be kept.
                         #If specified, this overrides map_except
 
-    optional_fields = [] #Fields that can be omitted without throwing an error
-    fields = {}         #xpath expressions that match key fields
-    cleaners = {}       #functions to clean the results of xpath searches on fields
+#    optional_fields = [] #Fields that can be omitted without throwing an error
+#    fields = {}         #xpath expressions that match key fields
+#    cleaners = {}       #functions to clean the results of xpath searches on fields
 
-    def parseBlog(self, filepath, max_posts=None, shuffle=False, filename=None, check_only=False, verbose=False ):
+    field_scrapers = {}
+
+    def parseBlog(self, filepath, max_posts=None, shuffle=False, filename=None, verbose=False ):
         if verbose: print 'Parsing blog at filepath', filepath
                 
         post_files = self.mapPostFiles(filepath, verbose)
@@ -35,24 +37,20 @@ class BlogParser(object):
         if max_posts:
             post_files = post_files[:max_posts]
 
-        if check_only:
-            results = {}
-        else:
-            blog_xml = etree.Element( "blog" )
-            #self.setExpressions( url )
-            self.setBlogVariables( blog_xml, verbose )
+        results = {}
+        blog_xml = etree.Element( "blog" )
+        #self.setExpressions( url )
+        self.setBlogVariables( blog_xml, verbose )
 
         for p in post_files:
             if verbose: print '\tParsing post in file', p
 
             try:
-                result = self.parsePost( file(p, 'r').read(), verbose, check_only )
-                if check_only:
-                    results[p] = result
-                else:
-                    blog_xml.append( result )
+                (result, xml) = self.parsePost(file(p, 'r').read(), verbose)
+                results[p] = result
+                blog_xml.append(xml)
 
-            #! This is a hack
+            #! This is a hack to capture directories parsed as files
             except IOError:
 #                print 'IOError'
                 pass
@@ -60,10 +58,7 @@ class BlogParser(object):
         if filename:
             file(filename,'w').write( etree.tostring(blog_xml, pretty_print=True) )
         
-        if check_only:
-            return results
-        else:
-            return blog_xml
+        return (results, blog_xml)
 
     def mapPostFiles(self, filepath, verbose=False):
         if verbose: print '\tMapping post pages...'
@@ -89,7 +84,7 @@ class BlogParser(object):
         blog_xml.set( "parser", str(self.__class__.__name__))
         blog_xml.set( "parse_date", str(datetime.datetime.now()) )
 
-    def parsePost(self, text, verbose=False, check_only=False):
+    def parsePost(self, text, verbose=False):#, check_only=False):
         """Parse a post and return an xml entry OR result triple
         
         Arguments:
@@ -114,58 +109,24 @@ class BlogParser(object):
         """
         
         post_xml = etree.Element( "post" )
-        H = html.fromstring(text)
+        html_tree = html.fromstring(text)
 
         result = {}
-        for f in field_keys:
-            try:
-                xpath_count = None
-                clean_success = None
-                result_text = None
-                
-                if f in self.fields:
-                    e = etree.SubElement( post_xml, f )
-                    X = H.xpath(self.fields[f])
-                    xpath_count = len(X)
-                    
-                    clean_success = False
-                    if xpath_count > 0:
-                        x = X[0]
-                        if f in self.cleaners:
-                            e.text = self.cleaners[f]( x )
-                        else:
-                            e.text = etree.tostring( x )
-                        result_text = e.text
-                        clean_success = True
-                        
-                    elif f in self.optional_fields:
-                        clean_success = True
+        for field_name in field_keys:
+            (r, x) = self.field_scrapers[field_name]["function"](
+                field_name,
+                html_tree,
+                **self.field_scrapers[field_name]["args"])
+            result[field_name] = r
 
-                elif f in self.optional_fields:
-                    xpath_count = 0
-                    clean_success = True
-
-            except Exception, err:
-                if verbose:
-                    exc_type, exc_obj, exc_tb = sys.exc_info()
-                    fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]      
-                    print(exc_type, fname, exc_tb.tb_lineno)                
-
-#            except Exception as e:
-#                print type(e)
-#                print e.args
-#                print e
-
-#            except Exception as err:
-#                raise err
-
-            result[f] = ( xpath_count, clean_success, result_text )
-
+        return (result, post_xml)
+        """
         if check_only:
             return result
         else:
-            return post_xml
-
+            return x#post_xml
+        """
+        
     def convertToHtml(self, blog_xml, filename=None):
         blog_html = etree.Element('html')
 
@@ -222,12 +183,12 @@ class BlogParser(object):
 
 
 """Import the actual parsers..."""
-from blogspot_a import *  
+#from blogspot_a import *  
 from wordpress_a import *  
-from wordpress_b import *  
-from typepad_a import *  
-from newsvine_a import *  
-from livejournal_a import *  
+#from wordpress_b import *  
+#from typepad_a import *  
+#from newsvine_a import *  
+#from livejournal_a import *  
 
 
 

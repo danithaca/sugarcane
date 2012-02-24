@@ -138,7 +138,7 @@ class ParserInspector(Inspector):
 
     def inspect_blog_parser_pair(self, blog, parser, max_posts, shuffle):
         P = parser_registry[parser]()
-        results = P.parseBlog(blog, max_posts=max_posts, shuffle=shuffle, check_only=True)
+        (results, xml) = P.parseBlog(blog, max_posts=max_posts, shuffle=shuffle)
         return results
 
     def inspect(self, parsers=None, log_results=False, log_summary=False,
@@ -253,19 +253,21 @@ class SoloBlogInspector(Inspector):
             print p
             print blog_file_url + self.blog_url + p.split(self.blog_url)[1]
             text = file(p,'r').read()
-            r = parser.parsePost(text, verbose=True, check_only=True)
+            (r, x) = parser.parsePost(text, verbose=True)
             results.append( r )
 
-            for k in r:
-                print '\t', k, ':'+' '*(14-len(k)), r[k][0], '\t', r[k][1]
-                if r[k][2]:
-                    print '\t\t', r[k][2][:80]
+#            print r["success"]
+            for f in r:
+#                print r[f]
+                print '\t', f, ':'+' '*(14-len(f)), r[f]["success"], '\t', r[f]["message"]
+#                if r[k][2]:
+#                    print '\t\t', r[k][2][:80]
 
-                if not r[k][1] in [True, None]:
+                if not r[f]["success"]:
                     found_mistake = True
 
             if found_mistake and break_on_mistake:
-                print "Opening in Firefox..."
+                print "Found mistake.  Exiting..."
 #                firefox(p)
                 return 0
 
