@@ -104,7 +104,9 @@ class MapperInspector(Inspector):
 class ParserInspector(Inspector):
     def calc_success_rate(self, results, field):
         success = 0
+#        print results
         for post in results:
+#            print results[post][field]
             if results[post][field]["success"]:
                 success += 1 
         return success
@@ -147,7 +149,7 @@ class ParserInspector(Inspector):
         return results
 
     def inspect(self, parsers=None, log_results=False, log_summary=False,
-        shuffle=False, max_posts=20):
+        shuffle=False, max_posts=20, verbose=False):
         
         if not parsers:
             parsers = parser_registry.keys()
@@ -240,13 +242,50 @@ class ParserInspector(Inspector):
 
 
 
-class SoloBlogInspector(Inspector):
+class SoloBlogInspector(ParserInspector):
 
     def __init__(self, blog_path, blog_url):
         self.blog_path = blog_path
         self.blog_url = blog_url
+        
+    def inspect_multiple(self, parsers=None, shuffle=False, max_posts=20, verbose=False):
+        "Check parsers and see which one seems to fit the best."
+            
+        if not parsers:
+            parsers = parser_registry.keys()
+        
+        post_count = {}
+        perfect_pct = {}
+        acceptable_pct = {}
 
-    def inspect(self, parser_name, log_results=False,
+        for p in parsers:
+            results = self.inspect_blog_parser_pair(self.blog_url, p, max_posts, shuffle)
+#            print results
+            post_count[p] = len(results)
+            perfect_pct[p] = self.calc_percent_perfect(results)
+            acceptable_pct[p] = self.calc_percent_acceptable(results)
+
+            print p
+            print '\t', post_count[p], '\tPost count'
+            print '\t', round(100*perfect_pct[p]), '\t% perfect'
+            print '\t', round(100*acceptable_pct[p]), '\t% acceptable'
+            print
+            for f in field_keys:
+                print '\t', self.calc_success_rate(results, f), f
+
+            print
+
+        best_parser = max(acceptable_pct, key=acceptable_pct.get)
+        if acceptable_pct[best_parser] <= 0:
+            best_parser = "None"
+            best_pct = -1
+        else:
+            best_pct = acceptable_pct[best_parser]
+                    
+        print
+        print best_parser, ':', best_pct
+
+    def inspect_single(self, parser_name, log_results=False,
         shuffle=False, max_posts=20,
         break_on_mistake=True):
 

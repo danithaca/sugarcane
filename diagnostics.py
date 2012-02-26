@@ -30,26 +30,35 @@ def test_mappers(args):
 #  This could mostly be rewritten as a decorator
 #  Not worth the time right now.
 @argh.arg('--parsers', default=None, help='List of parsers', nargs='+')
+@argh.arg('--blogs', default=None, help='List of blogs', nargs='+')
 @argh.arg('--blog-file', default=default_blog_file, help='A file containing the list of blogs on separate rows')
 @argh.arg('--input-path', default=input_path, help='The path where the blog is stored')
 @argh.arg('--log-results', default=False, help='Log blog-by-parser results to csv?')
 @argh.arg('--log-summary', default=False, help='Log blog-level summary results to csv?')
 def test_parsers(args):
     "Test one or more parsers on a list of blogs"
-    
-    blogs = file(args.blog_file,'r').read()[:-1].split('\n')
+
+    if args.blogs:    
+        blogs = args.blogs
+    else:
+        blogs = file(args.blog_file,'r').read()[:-1].split('\n')
+        
     inspector = ParserInspector(args.input_path, blogs)
     inspector.inspect(args.parsers, log_results=args.log_results, log_summary=args.log_summary)
 
 
 @argh.arg('blog', help='The URL of the blog to be parsed')
-@argh.arg('parser', default=None, help='The parser to test')
+@argh.arg('--parsers', default=None, help='List of parsers', nargs='+')
+@argh.arg('--parser', default=None, help='The parser to test')
 @argh.arg('--input-path', default=input_path, help='The path where the blog is stored')
 @argh.arg('--log-results', default=False, help='Log post-level results to csv?')
 def test_blog(args):
-    "Test a single parser on a single blog"
+    "Test one or more parsers on a single blog (Workhorse inspector)"
     inspector = SoloBlogInspector(args.input_path, args.blog)
-    inspector.inspect(args.parser, log_results=args.log_results)
+    if args.parser:
+        inspector.inspect_single(args.parser, log_results=args.log_results)
+    else:
+        inspector.inspect_multiple(args.parsers)
 
 
 #! This arg should probably be optional
