@@ -13,7 +13,7 @@ class WordpressParserC( BlogParser ):
             'function' : utilities.generic_field_scraper,
             'args' : {
                 'xpath' : "//h2[contains(@class,'post-titulo')]",
-                'cleaner' : utilities.cleanAndTextify,
+                'cleaner' : utilities.stripAllTags,
                 }
             },
 
@@ -39,8 +39,11 @@ class WordpressParserC( BlogParser ):
             },
 
         "labels"   : {
-            'function' : utilities.empty_field_scraper,
-            'args' : {}
+            'function' : utilities.multiple_field_scraper,
+            'args' : {
+                'xpath' : "//a[contains(@rel,'tag')]",
+                'cleaner' : utilities.stripAllTags,
+                }
             },
 
         "comment-count"   : {

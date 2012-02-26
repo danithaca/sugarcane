@@ -1,3 +1,4 @@
+from copy import deepcopy
 from . import *
 
 @profiledParser
@@ -5,7 +6,6 @@ class BlogspotParserA( BlogParser ):
         
     def extractLabels(x):
         L = x.xpath('.//a')
-#        if not L: return ""
 
         labels = []
         for l in L:
@@ -67,27 +67,16 @@ class BlogspotParserA( BlogParser ):
             },
         }
 
-"""
 
-    fields = {
-        "title"   : "//h3[@class='post-title entry-title']",
-#        "author"  : "//span[@class='post-author vcard']/span/a",
-#        "author"  : "//span[@class='post-author vcard']/span",
-        "author"  : "//span[contains(@class,'post-author')]/span",
-        "date"    : "//h2[@class='date-header']/span",
-#        "content" : "//div[@class='post-body entry-content']",
-        "content" : "//div[contains(@class,'post-body')]",
-        "labels"  : "//span[@class='post-labels']",
-        "comment-count" : "//div[@id='comments']/h4",
-    }
 
-    cleaners = {
-        "title"   : utilities.getNodeText,
-#        "author"  : utilities.getNodeText,
-        "author"  : utilities.stripAllTags,
-        "date"    : utilities.getNodeText,
-        "content" : utilities.cleanAndTextify,
-        "labels"  : extractLabels,
-        "comment-count" : extractCommentCount,
-    }
-"""
+@profiledParser
+class BlogspotParserB( BlogspotParserA ):
+    field_scrapers = deepcopy(BlogspotParserA.field_scrapers)
+    
+    field_scrapers["date"] = {
+        'function' : utilities.generic_field_scraper,
+        'args' : {
+            'xpath' : "//h2[@class='date-header']",
+            'cleaner' : utilities.stripAllTags,
+            }
+        }

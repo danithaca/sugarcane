@@ -283,11 +283,11 @@ class SoloBlogInspector(ParserInspector):
             best_pct = acceptable_pct[best_parser]
                     
         print
-        print best_parser, ':', best_pct
+        print best_parser, ':', round(100*best_pct)
 
     def inspect_single(self, parser_name, log_results=False,
         shuffle=False, max_posts=20,
-        break_on_mistake=True):
+        break_on_mistake=True, break_on_any_mistake=False):
 
         parser = parser_registry[parser_name]()
         blog = self.blog_path+self.blog_url    
@@ -314,8 +314,12 @@ class SoloBlogInspector(ParserInspector):
             for f in r:
                 print '\t', f, ':'+' '*(14-len(f)), r[f]["success"], '\t', r[f]["message"]
 
-                if f in required_fields and not r[f]["success"]:
-                    found_mistake = True
+                if not r[f]["success"]:
+                    if break_on_any_mistake:
+                        found_mistake = True
+                        
+                    if break_on_mistake and f in required_fields:
+                        found_mistake = True
 
             if found_mistake and break_on_mistake:
                 print "Found mistake.  Exiting..."

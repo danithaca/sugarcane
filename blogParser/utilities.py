@@ -55,6 +55,38 @@ def generic_field_scraper(field_name, html_tree, xpath, cleaner):
 
     return (result, xml)
 
+def multiple_field_scraper(field_name, html_tree, xpath, cleaner, join_str=', '):
+    success = False
+    xpath_count = None
+    result_text = None
+
+    try:
+        xml = etree.Element( field_name )
+        xpath_matches = html_tree.xpath(xpath)
+
+        xpath_count = len(xpath_matches)
+        result_text = []
+        for x in xpath_matches:
+            result_text.append( cleaner(x) )
+        
+        xml.text = join_str.join(result_text)
+        success = True
+
+    except Exception, err:
+        exc_type, exc_obj, exc_tb = sys.exc_info()
+        fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]      
+        print(exc_type, fname, exc_tb.tb_lineno)                
+    
+    result = {
+        'success' : success,
+        'message' : None,
+        'contents' : result_text,
+        'details' : {
+            'xpath_count' : xpath_count,
+            }
+        }
+
+    return (result, xml)
 
 def empty_field_scraper(field_name, html_tree):
     result = {

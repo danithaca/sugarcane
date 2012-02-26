@@ -174,7 +174,7 @@ class BlogParser(object):
         return doc_div
 
 """Import the actual parsers..."""
-from blogspot_a import *  
+from blogspot import *  
 from wordpress_a import *
 from wordpress_b import *
 from wordpress_c import *
@@ -182,5 +182,5 @@ from wordpress_c import *
 #from newsvine_a import *  
 #from livejournal_a import *  
 
-from absolutezerounites import AbsoluteZeroUnitesParser
-
+#from absolutezerounites import AbsoluteZeroUnitesParser
+#from alankhenderson import AlanKHendersonParser

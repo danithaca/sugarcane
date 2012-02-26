@@ -51,12 +51,19 @@ def test_parsers(args):
 @argh.arg('--parsers', default=None, help='List of parsers', nargs='+')
 @argh.arg('--parser', default=None, help='The parser to test')
 @argh.arg('--input-path', default=input_path, help='The path where the blog is stored')
+@argh.arg('--shuffle', default=False, help='Shuffle posts?')
 @argh.arg('--log-results', default=False, help='Log post-level results to csv?')
+@argh.arg('--strict-breaking', default=False, help='Break on any mistake?')
 def test_blog(args):
     "Test one or more parsers on a single blog (Workhorse inspector)"
     inspector = SoloBlogInspector(args.input_path, args.blog)
     if args.parser:
-        inspector.inspect_single(args.parser, log_results=args.log_results)
+        inspector.inspect_single(
+            args.parser,
+            log_results=args.log_results,
+            shuffle=args.shuffle,
+            break_on_any_mistake=args.strict_breaking
+        )
     else:
         inspector.inspect_multiple(args.parsers)
 
