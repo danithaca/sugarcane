@@ -3,7 +3,11 @@ import random
 import datetime
 import glob
 import csv
+
+from collections import defaultdict
 from copy import deepcopy
+from lxml import html, etree
+
 from blogParser import field_keys, parser_registry
 
 log_path = '/users/agong/Desktop/blog-crawl-results/'
@@ -17,7 +21,9 @@ required_fields = ['content']#['title', 'date', 'content']
 
 
 class Inspector(object):
-    def __init__(self, blog_list=None):
+    def __init__(self, blog_path, blog_list=None):
+        self.blog_path = blog_path
+    
         if blog_list:
             self.set_blog_list(blog_list)
 
@@ -52,7 +58,7 @@ class Inspector(object):
 class MapperInspector(Inspector):
     def inspect_blog_mapper_pair(self, blog, parser):
         P = parser_registry[parser]()
-        posts = P.mapPostFiles(blog)
+        posts = P.mapPostFiles(self.blog_path+blog)
         return len(posts)
         
     def count_blog_files(self, blog):
@@ -82,8 +88,8 @@ class MapperInspector(Inspector):
 
             row = [i, self.count_blog_files(blog)] + [results[p] for p in parsers] + \
                 [
-                    blog.split('/')[-1],
-                    blog,
+                    blog,#.split('/')[-1],
+                    self.blog_path+blog,
                     datetime.date.strftime(datetime.datetime.now(), "%Y/%m/%d %H:%M:%S")
                 ]
             print '\t'.join([str(r) for r in row])
@@ -137,7 +143,7 @@ class ParserInspector(Inspector):
 
     def inspect_blog_parser_pair(self, blog, parser, max_posts, shuffle):
         P = parser_registry[parser]()
-        (results, xml) = P.parseBlog(blog, max_posts=max_posts, shuffle=shuffle)
+        (results, xml) = P.parseBlog(self.blog_path+blog, max_posts=max_posts, shuffle=shuffle)
         return results
 
     def inspect(self, parsers=None, log_results=False, log_summary=False,
@@ -188,8 +194,8 @@ class ParserInspector(Inspector):
                         [self.calc_success_rate(results, f) for f in field_keys] + \
                         [
                             p,
-                            blog.split('/')[-1],
-                            blog,
+                            blog,#.split('/')[-1],
+                            self.blog_path+blog,
                             datetime.date.strftime(datetime.datetime.now(), "%Y/%m/%d %H:%M:%S")
                         ]
                     bxp_csv.writerow( row )
@@ -213,8 +219,8 @@ class ParserInspector(Inspector):
                     [perfect_pct[p] for p in parsers] + \
                     [acceptable_pct[p] for p in parsers] + \
                     [
-                        blog.split('/')[-1],
-                        blog,
+                        blog,#.split('/')[-1],
+                        self.blog_path+blog,
                         datetime.date.strftime(datetime.datetime.now(), "%Y/%m/%d %H:%M:%S")
                     ]
                 summary_csv.writerow( row )
@@ -298,6 +304,40 @@ class SoloBlogInspector(Inspector):
 
 
 class FrontPageInspector(Inspector):
-    pass    
+    pass
 
 
+class XpathInspector(Inspector):
+    """Quick comparison of blogs to xpath queries -- no need for Parser classes."""
+    
+    def inspect(self, xpath_queries, mapper_parser=None):
+        matches = defaultdict(int)
+    
+        for blog in self.blog_list:
+            html_parser = etree.HTMLParser(remove_blank_text=True)
+            html_tree = html.parse(self.blog_path + blog + '/index.html', html_parser)
+
+            found_one = False
+            for x in xpath_queries:
+                result = html_tree.xpath(x)
+                count = len(result)
+#                print count, '\t', x
+#                for r in result:
+#                    c = r.attrib["class"]
+#                    print '\t', c
+#                    print 'post' in c.split(' ')
+                if count > 0:
+                    matches[x] += 1
+                    found_one = True
+                    
+            if not found_one:
+                print '='*80
+                print blog
+                print blog_file_url + blog + '/index.html'
+                print
+
+
+        print
+        print '='*80
+        for x in xpath_queries:
+            print matches[x], '\t', x

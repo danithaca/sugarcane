@@ -18,7 +18,6 @@ def profiledParser( parser ):
 
 
 xml_parser = etree.XMLParser(remove_blank_text=False)
-#html_parser = etree.HTMLParser(remove_blank_text=True)
 
 field_keys = ["title","author","date","content","labels","comment-count"]
 
@@ -177,7 +176,7 @@ class BlogParser(object):
 
 """Import the actual parsers..."""
 from blogspot_a import *  
-from wordpress_a import *  
+from wordpress_a import *
 from wordpress_b import *
 from wordpress_c import *
 #from typepad_a import *  
