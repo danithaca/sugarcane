@@ -136,6 +136,12 @@ Next steps:
     Integrate with scrapy
     Build blogInspector
 
+=== 2012/02/25 ===
+
+lrionline.com -- Not a blog.  Removed from list: data/um1-completed-nonempty-blogs.txt 
+
+
+
 
 
 

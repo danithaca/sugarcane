@@ -7,3 +7,6 @@
 //div[@class='blogbody']
 //div[@class='entry']
 //div[@class='post_text']
+//div[@id='main']
+//div[@class='excerpt']
+//div[@class='story']

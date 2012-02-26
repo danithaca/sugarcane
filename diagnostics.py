@@ -15,8 +15,8 @@ def list_parsers(args):
 
 
 @argh.arg('--parsers', default=None, help='List of parsers', nargs='+')
-@argh.arg('--input-path', default=input_path, help='The path where the blog is stored')
 @argh.arg('--blog-file', default=default_blog_file, help='A file containing the list of blogs on separate rows')
+@argh.arg('--input-path', default=input_path, help='The path where the blog is stored')
 @argh.arg('--log-results', default=False, help='Log the results to csv?')
 def test_mappers(args):
     "Test mappers from one or more parsers on a list of blogs"
@@ -47,14 +47,15 @@ def test_parsers(args):
 @argh.arg('--input-path', default=input_path, help='The path where the blog is stored')
 @argh.arg('--log-results', default=False, help='Log post-level results to csv?')
 def test_blog(args):
-    "Test one or more parsers on a single blog"
+    "Test a single parser on a single blog"
     inspector = SoloBlogInspector(args.input_path, args.blog)
     inspector.inspect(args.parser, log_results=args.log_results)
 
 
 #! This arg should probably be optional
-@argh.arg('blog_file', help='A file containing blog urls in rows')
+#@argh.arg('blog_file', help='A file containing blog urls in rows')
 @argh.arg('xpath_query_file', default=None, help='A file containing xpath queries in rows')
+@argh.arg('--blog-file', default=default_blog_file, help='A file containing the list of blogs on separate rows')
 @argh.arg('--input-path', default=input_path, help='The path where the blog is stored')
 @argh.arg('--mapper', default=None, help='A parser contining a mapper to use for mapping posts')
 def xpath_test(args):

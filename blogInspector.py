@@ -63,7 +63,7 @@ class MapperInspector(Inspector):
         
     def count_blog_files(self, blog):
         count = 0
-        for root, subFolders, files in os.walk(blog):
+        for root, subFolders, files in os.walk(self.blog_path+blog):
             for file in files:
                 count += 1
         return count
@@ -303,10 +303,6 @@ class SoloBlogInspector(Inspector):
         return 1
 
 
-class FrontPageInspector(Inspector):
-    pass
-
-
 class XpathInspector(Inspector):
     """Quick comparison of blogs to xpath queries -- no need for Parser classes."""
     
@@ -314,30 +310,39 @@ class XpathInspector(Inspector):
         matches = defaultdict(int)
     
         for blog in self.blog_list:
-            html_parser = etree.HTMLParser(remove_blank_text=True)
-            html_tree = html.parse(self.blog_path + blog + '/index.html', html_parser)
+            try:
+                html_parser = etree.HTMLParser(remove_blank_text=True)
+                html_tree = html.parse(self.blog_path + blog + '/index.html', html_parser)
 
-            found_one = False
-            for x in xpath_queries:
-                result = html_tree.xpath(x)
-                count = len(result)
-#                print count, '\t', x
-#                for r in result:
-#                    c = r.attrib["class"]
-#                    print '\t', c
-#                    print 'post' in c.split(' ')
-                if count > 0:
-                    matches[x] += 1
-                    found_one = True
-                    
-            if not found_one:
+                found_one = False
+                for x in xpath_queries:
+                    result = html_tree.xpath(x)
+                    count = len(result)
+
+                    if count > 0:
+                        matches[x] += 1
+                        found_one = True
+
+                if not found_one:
+                    print '='*80
+                    print blog
+                    print blog_file_url + blog + '/index.html'
+                    print
+
+            except IOError:
                 print '='*80
+                print 'IOError -- does this blog have an index.html file?'
                 print blog
                 print blog_file_url + blog + '/index.html'
                 print
+                    
 
 
         print
         print '='*80
         for x in xpath_queries:
             print matches[x], '\t', x
+
+
+class FrontPageInspector(Inspector):
+    pass
