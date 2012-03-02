@@ -306,8 +306,9 @@ class SoloBlogInspector(ParserInspector):
             print '='*80
             print p
             print blog_file_url + self.blog_url + p.split(self.blog_url)[1]
-            text = file(p,'r').read()
-            (r, x) = parser.parsePost(text, verbose=True)
+            (r, x) = parser.parsePost(p, verbose=True)
+#            text = file(p,'r').read()
+#            (r, x) = parser.parsePost(text, verbose=True)
             results.append( r )
 
             for f in r:

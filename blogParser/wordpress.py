@@ -318,8 +318,9 @@ class WordpressParser( BlogParser ):
                 details[x] = xpath_count
                 
                 if xpath_count > 0:
-                    x = xpath_matches[0]
-#                    result_text = cleaner(x)
+                    m = xpath_matches[0]
+#                    print x, m
+                    result_text = cleaner(m)
                     xml.text = result_text
                     success = True
 
@@ -339,6 +340,8 @@ class WordpressParser( BlogParser ):
 #                'xpath_count' : xpath_count,
 #                }
             }
+
+        print etree.tostring(xml, pretty_print=True)
 
         return (result, xml)
 
@@ -363,7 +366,7 @@ class WordpressParser( BlogParser ):
                     "//div[@class='contenttitle']/h1",
                     "//h2[@class='post-titulo']",
                 ],
-                'cleaner' : utilities.getNodeText,
+                'cleaner' : utilities.stripAllTags,#cleanAndTextify,#getNodeText,
                 }
             },
 
@@ -394,7 +397,7 @@ class WordpressParser( BlogParser ):
                     "//a[contains(@rel,'tag')]",
                     "//span[@class='entry-category']/a",
                 ],
-#                'cleaner' : utilities.multiple_field_scraper,
+                'cleaner' : lambda x: str(len(x)) #utilities.multiple_field_scraper,
                 }
             },
 

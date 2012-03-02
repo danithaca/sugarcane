@@ -128,24 +128,21 @@ def test_posts(args):
     parser = parser_registry[args.parser]()
     posts = file(args.post_file,'r').read()[:-1].split('\n')
 
-    weird_list = ['michaelscomments.wordpress.com']
-
     for p in posts:
-        weird = sum([ re.match( w, p ) != None for w in weird_list ])
-        if not weird:
-            (r, x) = parser.parsePost(file(input_path + p,'r').read())
-            errors = 0
-            for f in r:
-                if 'details' in r[f]:
-                    total_matches = sum([r[f]['details'][x] for x in r[f]['details']]) 
-                    if total_matches == 0 or (total_matches > 1 and f is not 'labels'):
-                        print '\t', total_matches, '\t', f
-                        errors += 1
-    #                    for x in r[f]["details"]:
-    #                        print '\t\t', r[f]["details"][x], '\t', x
+        print "http://www.cscs.umich.edu/~agong/um1-blog-crawl/"+"mirrors/" + p
+        (r, x) = parser.parsePost(file(input_path + p,'r').read())
+        errors = 0
+        for f in r:
+            if 'details' in r[f]:
+                total_matches = sum([r[f]['details'][x] for x in r[f]['details']]) 
+                if total_matches == 0 or (total_matches > 1 and f is not 'labels'):
+                    errors += 1
+                print '\t', total_matches, '\t', f
+                for x in r[f]["details"]:
+                    print '\t\t', r[f]["details"][x], '\t', x
 
-            if errors > 0:
-                print "http://www.cscs.umich.edu/~agong/um1-blog-crawl/"+"mirrors/" + p
+#        if errors > 0:
+#            print "http://www.cscs.umich.edu/~agong/um1-blog-crawl/"+"mirrors/" + p
 
 
 ##### Main function ###########################################################

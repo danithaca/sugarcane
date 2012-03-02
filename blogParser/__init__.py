@@ -89,17 +89,18 @@ class BlogParser(object):
         blog_xml.set( "parser", str(self.__class__.__name__))
         blog_xml.set( "parse_date", str(datetime.datetime.now()) )
 
-    def parsePost(self, text, verbose=False):#, check_only=False):
+    def parsePost(self, file_, verbose=False):
         """Parse a post and return a result dict and xml object"""
         
         post_xml = etree.Element( "post" )
-        html_tree = html.fromstring(text)
+        html_tree = html.fromstring(file(file_,'r').read())
 
         result = {}
         for field_name in field_keys:
             (r, x) = self.field_scrapers[field_name]["function"](
                 field_name,
                 html_tree,
+                file_,
                 **self.field_scrapers[field_name]["args"])
             post_xml.append(x)
             result[field_name] = r
