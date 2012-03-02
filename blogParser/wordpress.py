@@ -432,26 +432,3 @@ class WordpressParser( BlogParser ):
             'args' : {}
             },
         }
-
-
-"""
-"date"   : {
-    'function' : try_xpath_list,
-    'args' : {
-        'xpath' : [
-            "//span[@class='entry-date']",
-            "//span[@class='timr']",
-            "//div[@class='post']/div[@class='info']/div[@class='date']",
-            "//div[@class='post']/div[@class='info']/span[@class='date']",
-            "//div[@class='datecomrap']/div[@class='date']",
-            "//div[@class='authormeta']",  #Needs special cleaner
-            "//div[@class='post-byline']",  #Needs special cleaner
-            "//div[@class='post-info']",  #Needs special cleaner
-            "//abbr[@class='published']",  #Needs special cleaner
-            "//p[contains(@class,'postmetadata')]/small",  #Needs special cleaner
-#                    "//meta[",
-            ],
-        'cleaner' : utilities.getNodeText,
-        }
-    },
-"""

@@ -3,6 +3,7 @@ import glob
 import re
 import os
 import random
+import codecs
 
 from copy import deepcopy
 import lxml.etree as etree
@@ -124,7 +125,7 @@ class BlogParser(object):
 
         if filename:
             file(filename,'w').write( etree.tostring(blog_html, pretty_print=True) )
-
+#            codecs.open(filename, 'w', encoding='utf-8').write( etree.tostring(blog_html, pretty_print=True).decode('utf-8') )
         return blog_html
 
     def convertPostToHtml(self, post_xml):
@@ -138,9 +139,11 @@ class BlogParser(object):
             try:
                 e = etree.Element("div")
                 e.set("class", f)
-                e.text = post_xml.xpath(f)[0].text
-                if e.text == None:
-                    e.text = "&nbsp;"
+                text = post_xml.xpath(f)[0].text
+                if text == None:
+                    text = "&nbsp;"
+#                text = text.decode('utf-8')
+                e.text = text
                 doc_header.append(e)
             except IndexError:
                 pass
