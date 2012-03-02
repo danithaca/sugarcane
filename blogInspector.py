@@ -17,8 +17,7 @@ log_file = log_path+'inspector_logs.txt'
 blog_file_url = "http://www.cscs.umich.edu/~agong/um1-blog-crawl/"+"mirrors/"
 
 #! Hardcoded for now.
-required_fields = ['content']#['title', 'date', 'content']
-
+required_fields = ['title', 'date', 'content']
 
 class Inspector(object):
     def __init__(self, blog_path, blog_list=None):
@@ -350,7 +349,7 @@ class XpathInspector(Inspector):
     """Quick comparison of blogs to xpath queries -- no need for Parser classes."""
     
     def inspect(self, xpath_queries, mapper_parser=None):
-        matches = defaultdict(int)
+        matches = defaultdict(list)
     
         for blog in self.blog_list:
             try:
@@ -359,13 +358,16 @@ class XpathInspector(Inspector):
 
                 found_one = False
                 for x in xpath_queries:
-                    result = html_tree.xpath(x)
-                    count = len(result)
+                    try:
+                        result = html_tree.xpath(x)
+                        count = len(result)
 
-                    if count > 0:
-                        matches[x] += 1
-                        found_one = True
-
+                        if count > 0:
+                            matches[x].append(blog)
+                            found_one = True
+                    except etree.XPathEvalError:
+                        pass
+                                            
                 if not found_one:
                     print '='*80
                     print blog
@@ -379,12 +381,11 @@ class XpathInspector(Inspector):
                 print blog_file_url + blog + '/index.html'
                 print
                     
-
-
-        print
         print '='*80
         for x in xpath_queries:
-            print matches[x], '\t', x
+            print len(matches[x]), '\t', x
+#            for m in matches[x]:
+#                print '\t', blog_file_url+m
 
 
 class FrontPageInspector(Inspector):

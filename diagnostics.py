@@ -1,4 +1,4 @@
-import glob, csv, datetime, sys, inspect, random, os, argh
+import glob, csv, datetime, sys, inspect, random, os, argh, simplejson, re
 from blogParser import parser_registry
 #from blogParser.utilities import firefox
 from blogInspector import MapperInspector, ParserInspector, SoloBlogInspector, XpathInspector
@@ -99,12 +99,61 @@ def scraper_test(args):
     xpath_queries = file(args.xpath_query_file,'r').read()[:-1].split('\n')
     
     inspector.inspect(xpath_queries, args.mapper)
+    
+
+@argh.arg('mapper', help='A parser containing a mapper to use for mapping posts')
+@argh.arg('--blog-file', default=default_blog_file, help='A file containing blog urls in rows')
+@argh.arg('--input-path', default=input_path, help='The path where the blog is stored')
+def get_post_list(args):
+    "Get post files from a list of blogs, using the mapper from a designated parser"
+    
+    blogs = file(args.blog_file,'r').read()[:-1].split('\n')
+    parser = parser_registry[args.mapper]()
+    
+    posts = []
+    for b in blogs:
+        p = parser.mapPostFiles(args.input_path+b)
+        random.shuffle(p)
+        posts += p[:20]
+        
+    for p in posts:
+        print p
+        
+        
+@argh.arg('parser', help='The parser to use')
+@argh.arg('--post-file', default=default_blog_file, help='A file containing post urls in rows')
+@argh.arg('--input-path', default=input_path, help='The path where the blog(s) is/are stored')
+def test_posts(args):
+
+    parser = parser_registry[args.parser]()
+    posts = file(args.post_file,'r').read()[:-1].split('\n')
+
+    weird_list = ['michaelscomments.wordpress.com']
+
+    for p in posts:
+        weird = sum([ re.match( w, p ) != None for w in weird_list ])
+        if not weird:
+            (r, x) = parser.parsePost(file(input_path + p,'r').read())
+            errors = 0
+            for f in r:
+                if 'details' in r[f]:
+                    total_matches = sum([r[f]['details'][x] for x in r[f]['details']]) 
+                    if total_matches == 0 or (total_matches > 1 and f is not 'labels'):
+                        print '\t', total_matches, '\t', f
+                        errors += 1
+    #                    for x in r[f]["details"]:
+    #                        print '\t\t', r[f]["details"][x], '\t', x
+
+            if errors > 0:
+                print "http://www.cscs.umich.edu/~agong/um1-blog-crawl/"+"mirrors/" + p
+
 
 ##### Main function ###########################################################
 
 def main(argv=None):
     p = argh.ArghParser()
-    p.add_commands([list_parsers, test_mappers, test_parsers, test_blog, xpath_test])
+    p.add_commands([list_parsers, test_mappers, test_parsers, test_blog, xpath_test,
+        get_post_list, test_posts])
     p.dispatch()
 
 if __name__=='__main__':

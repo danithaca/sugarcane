@@ -1,4 +1,5 @@
 from copy import deepcopy
+from collections import defaultdict
 from . import *
 
 def get_date_from_wordpress_meta_tag(x):
@@ -300,6 +301,138 @@ class WordpressParserD( WordpressParserA ):
             }
         }
 
-#@profiledParser
-#class WordpressParserE( WordpressParserC ):
-#    pass
+@profiledParser
+class WordpressParser( BlogParser ):
+    def try_xpath_list( field_name, html_tree, xpath, cleaner=None ):    
+#        print '\t', field_name
+        success = False
+        xpath_count = None
+        result_text = None
+
+        xml = etree.Element( field_name )
+        details = defaultdict(int)
+        for x in xpath:
+#            try:
+                xpath_matches = html_tree.xpath(x)
+                xpath_count = len(xpath_matches)
+                details[x] = xpath_count
+                
+                if xpath_count > 0:
+                    x = xpath_matches[0]
+#                    result_text = cleaner(x)
+                    xml.text = result_text
+                    success = True
+
+#                print '\t\t', len(xpath_matches), '\t', x, '\t', result_text
+
+#            except Exception, err:
+#                exc_type, exc_obj, exc_tb = sys.exc_info()
+#                fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]      
+#                print(exc_type, fname, exc_tb.tb_lineno)                
+
+        result = {
+            'success' : success,
+            'message' : None,
+            'contents' : result_text,
+            'details' : details
+#            {
+#                'xpath_count' : xpath_count,
+#                }
+            }
+
+        return (result, xml)
+
+    map_glob = '/[0-9][0-9][0-9][0-9]/[0-9][0-9]/[0-9][0-9]/*/index.html'
+
+    field_scrapers = {
+        "title"   : {
+            'function' : try_xpath_list,
+            'args' : {
+                'xpath' : [
+                    "//h1[@class='entry-title']",
+                    "//h1[@class='title']",
+                    "//div[contains(@id,'post-')]/h2",
+                    "//div[contains(@class,'post-headline')]/h2",
+                    "//div[@class='posttitle']/h2",
+                    "//div[contains(@id,'post-')]/div[@class='title']/h2",
+                    "//div[@class='post-header']/h1",
+                    "//div[@id='header-about']",
+                    "//h3[@class='entry-title']",
+                    "//h1[@id='header']",
+                    "//h1[@class='post_name']",
+                    "//div[@class='contenttitle']/h1",
+                    "//h2[@class='post-titulo']",
+                ],
+                'cleaner' : utilities.getNodeText,
+                }
+            },
+
+        "content"   : {
+            'function' : try_xpath_list,
+            'args' : {
+                'xpath' : [
+                    "//div[contains(@class,'entry-content')]",
+                    "//div[contains(@class,'postentry')]",
+                    "//div[contains(@class,'postbody')]",
+                    "//div[contains(@class,'post-body')]",
+                    "//div[contains(@id,'post-')]//div[@class='entry']",
+                    "//div[@class='entry clear']",
+                    "//div[@class='storycontent']",
+                    "//div[@class='Post']",
+                    "//div[@class='post']/div[@class='content']",
+                    "//div[@class='post_text']",
+                    "//div[@id='contentmiddle']",
+                ],
+                'cleaner' : utilities.cleanAndTextify,
+                }
+            },
+
+        "labels"   : {
+            'function' : try_xpath_list,
+            'args' : {
+                'xpath' : [
+                    "//a[contains(@rel,'tag')]",
+                    "//span[@class='entry-category']/a",
+                ],
+#                'cleaner' : utilities.multiple_field_scraper,
+                }
+            },
+
+        "author"   : {
+            'function' : utilities.empty_field_scraper,
+            'args' : {}
+            },
+
+        "comment-count"   : {
+            'function' : utilities.empty_field_scraper,
+            'args' : {}
+            },
+
+        "date"   : {
+            'function' : utilities.empty_field_scraper,
+            'args' : {}
+            },
+        }
+
+
+"""
+"date"   : {
+    'function' : try_xpath_list,
+    'args' : {
+        'xpath' : [
+            "//span[@class='entry-date']",
+            "//span[@class='timr']",
+            "//div[@class='post']/div[@class='info']/div[@class='date']",
+            "//div[@class='post']/div[@class='info']/span[@class='date']",
+            "//div[@class='datecomrap']/div[@class='date']",
+            "//div[@class='authormeta']",  #Needs special cleaner
+            "//div[@class='post-byline']",  #Needs special cleaner
+            "//div[@class='post-info']",  #Needs special cleaner
+            "//abbr[@class='published']",  #Needs special cleaner
+            "//p[contains(@class,'postmetadata')]/small",  #Needs special cleaner
+#                    "//meta[",
+            ],
+        'cleaner' : utilities.getNodeText,
+        }
+    },
+"""
