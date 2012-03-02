@@ -303,7 +303,23 @@ class WordpressParserD( WordpressParserA ):
 
 @profiledParser
 class WordpressParser( BlogParser ):
-    def try_xpath_list( field_name, html_tree, xpath, cleaner=None ):    
+    def get_date_from_url( field_name, html_tree, file_name ):
+        xml = etree.Element( field_name )
+        YMD = file_name.split('/')[-5:-2]
+        date = YMD[1] + '/' + YMD[2] + '/' + YMD[0]
+        xml.text = date
+        
+        result = {
+            'success' : True,
+            'message' : None,
+            'contents' : date,
+            }
+
+#        print etree.tostring(xml, pretty_print=True)
+
+        return (result, xml)
+
+    def try_xpath_list( field_name, html_tree, file_name, xpath, cleaner=None ):    
 #        print '\t', field_name
         success = False
         xpath_count = None
@@ -341,7 +357,7 @@ class WordpressParser( BlogParser ):
 #                }
             }
 
-        print etree.tostring(xml, pretty_print=True)
+#        print etree.tostring(xml, pretty_print=True)
 
         return (result, xml)
 
@@ -412,7 +428,7 @@ class WordpressParser( BlogParser ):
             },
 
         "date"   : {
-            'function' : utilities.empty_field_scraper,
+            'function' : get_date_from_url,
             'args' : {}
             },
         }

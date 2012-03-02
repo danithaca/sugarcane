@@ -13,7 +13,7 @@ html_cleaner = Cleaner( style=True, scripts=True, comments=True, safe_attrs_only
 
 ### Field scraper functions ####################################################
 
-def generic_field_scraper(field_name, html_tree, xpath, cleaner):
+def generic_field_scraper(field_name, html_tree, file_name, xpath, cleaner):
     success = False
     xpath_count = None
     result_text = None
@@ -55,7 +55,7 @@ def generic_field_scraper(field_name, html_tree, xpath, cleaner):
 
     return (result, xml)
 
-def multiple_field_scraper(field_name, html_tree, xpath, cleaner, join_str=', '):
+def multiple_field_scraper(field_name, html_tree, file_name, xpath, cleaner, join_str=', '):
     success = False
     xpath_count = None
     result_text = None
@@ -88,7 +88,7 @@ def multiple_field_scraper(field_name, html_tree, xpath, cleaner, join_str=', ')
 
     return (result, xml)
 
-def empty_field_scraper(field_name, html_tree):
+def empty_field_scraper(field_name, html_tree, file_name):
     result = {
         'success' : False,
         'message' : "Field scraper not declared",

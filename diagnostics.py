@@ -130,7 +130,7 @@ def test_posts(args):
 
     for p in posts:
         print "http://www.cscs.umich.edu/~agong/um1-blog-crawl/"+"mirrors/" + p
-        (r, x) = parser.parsePost(file(input_path + p,'r').read())
+        (r, x) = parser.parsePost(input_path + p)
         errors = 0
         for f in r:
             if 'details' in r[f]:

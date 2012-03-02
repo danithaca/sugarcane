@@ -51,7 +51,8 @@ class BlogParser(object):
             if verbose: print '\tParsing post in file', p
 
             try:
-                (result, xml) = self.parsePost(file(p, 'r').read(), verbose)
+#                (result, xml) = self.parsePost(file(p, 'r').read(), verbose)
+                (result, xml) = self.parsePost(p, verbose)
                 results[p] = result
                 blog_xml.append(xml)
 
@@ -91,7 +92,6 @@ class BlogParser(object):
 
     def parsePost(self, file_, verbose=False):
         """Parse a post and return a result dict and xml object"""
-        
         post_xml = etree.Element( "post" )
         html_tree = html.fromstring(file(file_,'r').read())
 
@@ -102,6 +102,7 @@ class BlogParser(object):
                 html_tree,
                 file_,
                 **self.field_scrapers[field_name]["args"])
+                 
             post_xml.append(x)
             result[field_name] = r
 
