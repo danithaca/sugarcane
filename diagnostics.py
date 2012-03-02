@@ -63,9 +63,11 @@ def test_blog(args):
             log_results=args.log_results,
             shuffle=args.shuffle,
             break_on_any_mistake=args.strict_breaking
-        )
+            )
     else:
-        inspector.inspect_multiple(args.parsers)
+        inspector.inspect_multiple(args.parsers,
+            shuffle=args.shuffle,
+            )
 
 
 #! This arg should probably be optional

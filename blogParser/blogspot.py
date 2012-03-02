@@ -37,8 +37,8 @@ class BlogspotParserA( BlogParser ):
         "date"   : {
             'function' : utilities.generic_field_scraper,
             'args' : {
-                'xpath' : "//h2[@class='date-header']",#/span",
-                'cleaner' : utilities.stripAllTags,#utilities.getNodeText,
+                'xpath' : "//h2[@class='date-header']/span",
+                'cleaner' : utilities.getNodeText,
                 }
             },
 
@@ -80,3 +80,4 @@ class BlogspotParserB( BlogspotParserA ):
             'cleaner' : utilities.stripAllTags,
             }
         }
+        
