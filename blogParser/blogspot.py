@@ -37,8 +37,8 @@ class BlogspotParserA( BlogParser ):
         "date"   : {
             'function' : utilities.generic_field_scraper,
             'args' : {
-                'xpath' : "//h2[@class='date-header']/span",
-                'cleaner' : utilities.getNodeText,
+                'xpath' : "//h2[@class='date-header']",
+                'cleaner' : utilities.stripAllTags,
                 }
             },
 
@@ -66,18 +66,3 @@ class BlogspotParserA( BlogParser ):
                 }
             },
         }
-
-
-
-@profiledParser
-class BlogspotParserB( BlogspotParserA ):
-    field_scrapers = deepcopy(BlogspotParserA.field_scrapers)
-    
-    field_scrapers["date"] = {
-        'function' : utilities.generic_field_scraper,
-        'args' : {
-            'xpath' : "//h2[@class='date-header']",
-            'cleaner' : utilities.stripAllTags,
-            }
-        }
-        

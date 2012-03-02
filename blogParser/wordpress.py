@@ -300,5 +300,6 @@ class WordpressParserD( WordpressParserA ):
             }
         }
 
-@profiledParser
-class WordpressParserE( WordpressParserC ):
+#@profiledParser
+#class WordpressParserE( WordpressParserC ):
+#    pass
