@@ -120,7 +120,7 @@ class BlogParser(object):
 
         body_html = etree.Element('body')
         for x in blog_xml.xpath('//post'):
-            body_html.append( self.convertPostToHtml(x) )
+            body_html.append( self.convertPostToHtml(x, include_html_wrapper=False) )
         blog_html.append(body_html)
 
         if filename:
@@ -128,7 +128,7 @@ class BlogParser(object):
 #            codecs.open(filename, 'w', encoding='utf-8').write( etree.tostring(blog_html, pretty_print=True).decode('utf-8') )
         return blog_html
 
-    def convertPostToHtml(self, post_xml):
+    def convertPostToHtml(self, post_xml, include_html_wrapper=True):
         doc_div = etree.Element("div")
         doc_div.set("class", "document")
 
@@ -154,7 +154,12 @@ class BlogParser(object):
 
         S = post_xml.xpath('content')
         s = S[0].text
-        f = etree.fromstring(s, xml_parser)
+        if s:
+#            print type(s), len(s)
+            f = etree.fromstring(s, xml_parser)
+        else:
+            f = etree.Element("p")
+            #! Should probably use better error checking than this
 
         #Remove empty paragraphs        
         for p in f.xpath("p"):
@@ -176,7 +181,22 @@ class BlogParser(object):
 
         doc_div.append(doc_content)
 
-        return doc_div
+        if include_html_wrapper:
+            blog_html = etree.Element('html')
+
+            head_html = etree.SubElement( blog_html, 'head' )
+            head_html.append( etree.Element("link", REL="StyleSheet", HREF="article_style.css", TYPE="text/css") )
+            e = etree.Element( "meta", content="text/html; charset=UTF-8" )
+            e.set("http-equiv", "Content-Type")
+            head_html.append(e)
+
+            body_html = etree.Element('body')
+            body_html.append(doc_div)
+            blog_html.append(body_html)
+            
+            return blog_html
+        else:
+            return doc_div
 
 """Import the actual parsers..."""
 from blogspot import *  

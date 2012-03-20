@@ -144,13 +144,47 @@ def test_posts(args):
 #        if errors > 0:
 #            print "http://www.cscs.umich.edu/~agong/um1-blog-crawl/"+"mirrors/" + p
 
+@argh.arg('parser', help='The parser to use')
+@argh.arg('blog_file', help='A file containing blog urls in rows')
+@argh.arg('--xml-path', default=None, help='The path to store blog xml')
+@argh.arg('--html-path', default=None, help='The path to store blog html')
+@argh.arg('--input-path', default=input_path, help='The path where the blogs are stored')
+def apply_parser(args):
+    "Apply a parser to a list of blogs"
+
+    if args.xml_path:
+        from lxml import etree
+        
+    blogs = file(args.blog_file,'r').read()[:-1].split('\n')
+
+    p = parser_registry[args.parser]()
+
+    for b in blogs:
+        (r, x) = p.parseBlog(args.input_path+b)
+        print b, x, len(list(x))
+        
+        if args.xml_path:
+            file(args.xml_path+b+'.xml', 'w').write( etree.tostring( x, pretty_print=True ))
+        
+        if args.html_path:
+            counter = 0
+            for x2 in list(x):
+                try:
+                    h = p.convertPostToHtml(x2)
+                    counter += 1
+                    file(args.html_path+b+'-'+str(counter)+'.html', 'w').write( etree.tostring( h, pretty_print=True ))
+                except:
+                    print "=== Error ==="
+                    print b, ":", x.index(x2)
+
+    
 
 ##### Main function ###########################################################
 
 def main(argv=None):
     p = argh.ArghParser()
     p.add_commands([list_parsers, test_mappers, test_parsers, test_blog, xpath_test,
-        get_post_list, test_posts])
+        get_post_list, test_posts, apply_parser])
     p.dispatch()
 
 if __name__=='__main__':

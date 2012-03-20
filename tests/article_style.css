@@ -1,0 +1,35 @@
+body{
+  font-family: verdana, arial, san serif;
+  font-size:14pt;
+  width:650px;
+  margin-left:auto;
+  margin-right:auto;
+}
+
+div.document{
+  padding:30px;
+  margin:5px;
+  border: 2px solid #bbb;
+  display:block;
+  clear:both;
+}
+
+
+div.document-header{
+  border-bottom: 2px dashed #bbb;
+}
+
+div.document-header div{
+  padding:20px;
+}
+.title{
+  font-size:20pt;
+}
+.author, .date, .comment-count, .labels{
+  display:none;
+  visible:hidden;
+}
+
+div.document-content{
+  padding-top:20px;
+}
